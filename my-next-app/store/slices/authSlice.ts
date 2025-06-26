@@ -2,13 +2,12 @@ import { AuthCustomer, User } from '@/types/auth';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 
-
 interface AuthState {
   user?: User;
   items?: string[]; // Or whatever the correct type is for items
   customer: AuthCustomer | null;
   token: string | null;
-  username: string; 
+
   resetLoading: boolean;
   resetError: string | null;
   resetStep: number;
