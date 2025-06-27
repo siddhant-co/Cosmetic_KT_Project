@@ -74,48 +74,57 @@ export default function BannerSlider({ banners }: { banners: BannerItem[] }) {
               alt={banner.heading}
               className="w-full h-full object-cover"
             />
-            {/* <div className="absolute left-8 top-1/2 -translate-y-1/2 text-white max-w-md">
-              <p className="text-sm uppercase">{banner.subheading}</p>
-              <h2 className="text-4xl font-bold mt-2">{banner.heading}</h2>
-              {banner.subheading2 && (
-                <p className="mt-1 text-base">{banner.subheading2}</p>
-              )}
-              <a
-                href={banner.buttonLink}
-                className="mt-4 inline-block bg-white text-black px-5 py-2 rounded shadow hover:bg-gray-200 text-sm font-medium"
-              >
-                {banner.buttonText}
-              </a>
-            </div> */}
           </div>
         ))}
       </div>
 
       {/* Dots */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
         {banners.map((_, idx) => (
           <button
             key={idx}
             onClick={() => instanceRef.current?.moveToIdx(idx)}
-            className={`w-3 h-3 rounded-full ${
+            className={`w-3 h-3 rounded-full transition ${
               currentSlide === idx ? "bg-white" : "bg-gray-400"
             }`}
           ></button>
         ))}
       </div>
 
-      {/* Arrows */}
+      {/* Updated Arrows */}
       <button
         onClick={() => instanceRef.current?.prev()}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full hover:bg-black/70"
+        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 hover:scale-110 transition z-10"
       >
-        &#8592;
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="36"
+          height="36"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="#007BFF"
+          strokeWidth="2"
+          className="rotate-180"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
       </button>
+
       <button
         onClick={() => instanceRef.current?.next()}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full hover:bg-black/70"
+        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:scale-110 transition z-10"
       >
-        &#8594;
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="36"
+          height="36"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="#007BFF"
+          strokeWidth="2"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
       </button>
     </div>
   );

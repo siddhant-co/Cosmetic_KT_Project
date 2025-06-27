@@ -3,6 +3,7 @@ import CategorySection from "@/components/CategorySection/CategorySection";
 import HotListWrapper from "@/components/HotList/HotListWrapper";
 import TestProductCard from "@/components/ProductCard/TestProductCard";
 import FeaturesBanner from "@/components/ServersideComponent/FeaturesBanner/FeaturesBanner";
+import Footer from "@/components/ServersideComponent/Footer/Footer";
 import HeroBanner from "@/components/ServersideComponent/HeroBanner/HeroBanner";
 import WhyChooseUs from "@/components/ServersideComponent/WhyChooseUs/WhyChooseUs";
 
@@ -13,14 +14,11 @@ import WhyChooseUs from "@/components/ServersideComponent/WhyChooseUs/WhyChooseU
 import TestimonialsSection from "@/components/TestimonialsSection/TestimonialsSection";
 import TopCategories from "@/components/TopCategories/TopCategories";
 
-
-
-
 export default async function HomePage() {
   const banners = await fetchBanners(); // Server-side
 
   return (
-    <div className="pt-[50px]">
+    <div>
       <HeroBanner />
       <CategorySection />
       <HotListWrapper />
@@ -29,6 +27,7 @@ export default async function HomePage() {
        <WhyChooseUs/>
       <TestimonialsSection />
       <FeaturesBanner />
+      <Footer />
     </div>
   );
 }

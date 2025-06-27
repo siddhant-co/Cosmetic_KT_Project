@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { useDispatch, useSelector } from 'react-redux';
-import { CircleUserRound } from 'lucide-react';
-import { logout } from '@/store/slices/authSlice';
-import { RootState } from '@/store/store';
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
+import { CircleUserRound } from "lucide-react";
+import { logout } from "@/store/slices/authSlice";
+import { RootState } from "@/store/store";
+import { FiUser } from "react-icons/fi";
 
 export default function UserAvatar() {
   const dispatch = useDispatch();
@@ -19,14 +20,14 @@ export default function UserAvatar() {
   const username =
     customer?.username ||
     customer?.firstName ||
-    (customer?.email ? customer.email.split('@')[0] : '') ||
-    '';
+    (customer?.email ? customer.email.split("@")[0] : "") ||
+    "";
 
-  const initials = username ? username.slice(0, 2).toUpperCase() : 'US';
+  const initials = username ? username.slice(0, 2).toUpperCase() : "US";
 
   const handleLogout = () => {
     dispatch(logout());
-    router.push('/auth');
+    router.push("/auth");
     router.refresh();
   };
 
@@ -38,15 +39,18 @@ export default function UserAvatar() {
         setMenuOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // If user not logged in, show login icon
   if (!customer) {
     return (
       <Link href="/auth" aria-label="Login">
-        <CircleUserRound className="w-7 h-7 text-gray-800 hover:text-[#e7000b] transition-colors" />
+        <div className="flex flex-col items-center">
+          <FiUser size={20} />
+          <span>Profile</span>
+        </div>
       </Link>
     );
   }
@@ -62,7 +66,9 @@ export default function UserAvatar() {
         <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 text-white flex items-center justify-center font-bold text-sm uppercase">
           {initials}
         </div>
-        <span className="hidden md:inline text-gray-800 font-medium text-sm">{username}</span>
+        <span className="hidden md:inline text-gray-800 font-medium text-sm">
+          {username}
+        </span>
       </button>
 
       {menuOpen && (
