@@ -188,7 +188,7 @@ export default function CategorySlider({ categories }: Props) {
     }
   };
 
-  return (
+  return ( 
     <div className="relative px-1">
       {/* Arrows */}
       <button
