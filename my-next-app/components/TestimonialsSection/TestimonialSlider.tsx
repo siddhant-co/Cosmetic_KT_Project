@@ -1,14 +1,13 @@
 "use client";
- 
+
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation } from "swiper/modules";
+import { Autoplay } from "swiper/modules";
 import "swiper/css";
-import "swiper/css/navigation";
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { CircleChevronLeft, CircleChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Swiper as SwiperType } from "swiper";
- 
+
 type Testimonial = {
   id: string;
   name: string;
@@ -16,47 +15,46 @@ type Testimonial = {
   description: string;
   image: string;
 };
- 
+
 type Props = {
   testimonials: Testimonial[];
 };
- 
+
 export default function TestimonialSlider({ testimonials }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
- 
+
   const handlePrev = () => {
     swiperRef.current?.slidePrev();
   };
- 
+
   const handleNext = () => {
     swiperRef.current?.slideNext();
   };
- 
+
   return (
-    <div className="relative px-4 lg:px-10">
+    <div className="relative px-4 lg:px-10 bg-[#b0c9e8] py-10">
       {/* Arrows */}
       <button
         onClick={handlePrev}
-        className="hidden md:flex absolute left-[-40px] top-1/2 -translate-y-1/2 z-10 shadow p-1.5 rounded-full bg-white hover:bg-gray-100 transition"
+        className="hidden md:flex absolute left-[-50px] top-1/2 -translate-y-1/2 z-10 bg-white text-[#1d3b60] hover:bg-[#163152] hover:text-white p-2 rounded-full shadow transition"
       >
-        <CircleChevronLeft size={20} className="text-gray-600" />
+        <ChevronLeft size={18} />
       </button>
       <button
         onClick={handleNext}
-        className="hidden md:flex absolute right-[-40px] top-1/2 -translate-y-1/2 z-10 shadow p-1.5 rounded-full bg-white hover:bg-gray-100 transition"
+        className="hidden md:flex absolute right-[-50px] top-1/2 -translate-y-1/2 z-10 bg-white text-[#1d3b60] hover:bg-[#163152] hover:text-white p-2 rounded-full shadow transition"
       >
-        <CircleChevronRight size={20} className="text-gray-600" />
+        <ChevronRight size={18} />
       </button>
- 
+
       {/* Swiper */}
       <Swiper
-        modules={[Autoplay, Navigation]}
+        modules={[Autoplay]}
         spaceBetween={30}
         slidesPerView={1}
         centeredSlides
         autoplay={{ delay: 4000, disableOnInteraction: false }}
-        navigation
         onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
         onSwiper={(swiperInstance) => (swiperRef.current = swiperInstance)}
         breakpoints={{
@@ -94,5 +92,3 @@ export default function TestimonialSlider({ testimonials }: Props) {
     </div>
   );
 }
- 
- 
