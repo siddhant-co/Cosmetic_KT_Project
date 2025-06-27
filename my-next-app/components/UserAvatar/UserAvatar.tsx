@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import { CircleUserRound } from "lucide-react";
 import { logout } from "@/store/slices/authSlice";
 import { RootState } from "@/store/store";
 import { FiUser } from "react-icons/fi";

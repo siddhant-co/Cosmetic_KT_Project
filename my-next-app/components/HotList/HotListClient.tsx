@@ -3,34 +3,25 @@
 import { useKeenSlider, KeenSliderPlugin } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import ProductCard from "../ProductCard/ProductCard";
-import { Product } from "@/api/ProductCardApi";
+import { Products } from "@/api/testProductCardApi"; // ✅ Updated type import
 import { CircleChevronLeft, CircleChevronRight } from "lucide-react";
 
-// Optional animation plugin
+// KeenSlider Animation Plugin
 const animation: KeenSliderPlugin = (slider) => {
   let timeout: ReturnType<typeof setTimeout> | undefined;
-  let mouseOver = false;
-  function clearNextTimeout() {
-    clearTimeout(timeout);
-  }
+
+  const clearNextTimeout = () => clearTimeout(timeout);
 
   slider.on("created", () => {
-    slider.container.addEventListener("mouseover", () => {
-      mouseOver = true;
-      clearNextTimeout();
-    });
-    slider.container.addEventListener("mouseout", () => {
-      mouseOver = false;
-    });
+    slider.container.addEventListener("mouseover", clearNextTimeout);
+    slider.container.addEventListener("mouseout", clearNextTimeout);
   });
 
-  slider.on("animationStarted", () => {
-    clearNextTimeout();
-  });
+  slider.on("animationStarted", clearNextTimeout);
 };
 
 interface HotListClientProps {
-  products: Product[];
+  products: Products[]; // ✅ Updated type here too
 }
 
 const HotListClient = ({ products }: HotListClientProps) => {
@@ -77,7 +68,7 @@ const HotListClient = ({ products }: HotListClientProps) => {
       </p>
 
       <div className="relative">
-        {/* Arrow Buttons */}
+        {/* Arrows */}
         <button
           onClick={handlePrev}
           className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 shadow p-2 rounded-full bg-white hover:bg-gray-100"

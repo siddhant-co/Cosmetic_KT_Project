@@ -1,7 +1,8 @@
+// components/Navbar/NavbarIcons.tsx
 "use client";
 
 import UserAvatar from "@/components/UserAvatar/UserAvatar";
-import { FiUser, FiHeart, FiShoppingBag } from "react-icons/fi";
+import { FiHeart, FiShoppingBag } from "react-icons/fi";
 
 const NavbarIcons = () => {
   return (

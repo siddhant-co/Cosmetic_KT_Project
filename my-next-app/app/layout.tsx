@@ -31,7 +31,7 @@ export default async function RootLayout({
       >
         <ReduxProviderWrapper>
           <Navbar />
-          <main className="pt-4">{children}</main>
+          <main className="pt-0">{children}</main>
         </ReduxProviderWrapper>
       </body>
     </html>

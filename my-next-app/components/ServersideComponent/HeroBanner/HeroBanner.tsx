@@ -1,17 +1,35 @@
-// components/HeroBanner.tsx
-import { getBanners } from "@/api/getBannerApi";
+import { BannerType } from "@/types/banner";
 import BannerSlider from "@/components/ClientsideComponent/BannerSlider/BannerSlider";
+
+export const getBanners = async (): Promise<BannerType[]> => {
+  try {
+    const response = await fetch(
+      "https://ecom-testing.up.railway.app/banners",
+      {
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) throw new Error("Banner fetch failed");
+
+    const banners: BannerType[] = await response.json();
+    return banners;
+  } catch (error) {
+    console.error("Banner API error:", error);
+    return [];
+  }
+};
 
 const HeroBanner = async () => {
   const banners = await getBanners();
 
-  const activeBanners = (banners || [])
-    .filter((b: any) => b.isActive)
-    .sort((a: any, b: any) => a.sequence_number - b.sequence_number);
+  const active = banners
+    .filter((b) => b.isActive)
+    .sort((a, b) => a.sequence_number - b.sequence_number);
 
-  if (activeBanners.length === 0) return null;
+  if (!active.length) return null;
 
-  return <BannerSlider banners={activeBanners} />;
+  return <BannerSlider banners={active} />;
 };
 
 export default HeroBanner;

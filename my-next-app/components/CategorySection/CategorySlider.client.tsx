@@ -10,27 +10,18 @@ interface Props {
   categories: Category[];
 }
 
+// Cleaned-up animation plugin
 const animation: KeenSliderPlugin = (slider) => {
   let timeout: ReturnType<typeof setTimeout> | undefined;
-  let mouseOver = false;
 
-  function clearNextTimeout() {
-    clearTimeout(timeout);
-  }
+  const clearNextTimeout = () => clearTimeout(timeout);
 
   slider.on("created", () => {
-    slider.container.addEventListener("mouseover", () => {
-      mouseOver = true;
-      clearNextTimeout();
-    });
-    slider.container.addEventListener("mouseout", () => {
-      mouseOver = false;
-    });
+    slider.container.addEventListener("mouseover", clearNextTimeout);
+    slider.container.addEventListener("mouseout", clearNextTimeout);
   });
 
-  slider.on("animationStarted", () => {
-    clearNextTimeout();
-  });
+  slider.on("animationStarted", clearNextTimeout);
 };
 
 export default function CategorySlider({ categories }: Props) {
@@ -103,7 +94,6 @@ export default function CategorySlider({ categories }: Props) {
                   className="object-cover"
                 />
               ) : (
-                // Optional fallback
                 <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
                   No Image
                 </div>

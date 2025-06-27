@@ -1,7 +1,4 @@
 'use client';
-
-
-import { Products } from '@/api/testProductCardApi';
 import ProductCard from './ProductCard';
 import Link from 'next/link';
 import { mockProducts } from '@/api/mockProducts';

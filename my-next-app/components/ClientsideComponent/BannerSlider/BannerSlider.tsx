@@ -2,7 +2,8 @@
 
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface BannerItem {
   id: number;
@@ -12,15 +13,27 @@ interface BannerItem {
   buttonText: string;
   buttonLink: string;
   imageUrl: string;
+  mobile_banner?: string;
   isActive: boolean;
 }
 
 export default function BannerSlider({ banners }: { banners: BannerItem[] }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>(
     {
       loop: true,
+      slides: { perView: 1 },
       slideChanged(s) {
         setCurrentSlide(s.track.details.rel);
       },
@@ -62,17 +75,25 @@ export default function BannerSlider({ banners }: { banners: BannerItem[] }) {
   );
 
   return (
-    <div className="relative w-full h-[60vh] overflow-hidden">
+    <div className="relative w-full h-[60vh] sm:h-[70vh] md:h-[85vh] overflow-hidden">
+      {/* Slider */}
       <div ref={sliderRef} className="keen-slider w-full h-full">
         {banners.map((banner) => (
           <div
             key={banner.id}
-            className="keen-slider__slide relative flex items-center justify-center"
+            className="keen-slider__slide relative w-full h-full"
           >
-            <img
-              src={banner.imageUrl}
+            <Image
+              src={
+                isMobile && banner.mobile_banner
+                  ? banner.mobile_banner
+                  : banner.imageUrl
+              }
               alt={banner.heading}
-              className="w-full h-full object-cover"
+              fill
+              priority
+              className="object-cover object-center"
+              sizes="100vw"
             />
           </div>
         ))}
@@ -91,10 +112,10 @@ export default function BannerSlider({ banners }: { banners: BannerItem[] }) {
         ))}
       </div>
 
-      {/* Updated Arrows */}
+      {/* Arrows (hidden on mobile) */}
       <button
         onClick={() => instanceRef.current?.prev()}
-        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 hover:scale-110 transition z-10"
+        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 hover:scale-110 transition z-10 hidden sm:block"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +133,7 @@ export default function BannerSlider({ banners }: { banners: BannerItem[] }) {
 
       <button
         onClick={() => instanceRef.current?.next()}
-        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:scale-110 transition z-10"
+        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:scale-110 transition z-10 hidden sm:block"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
