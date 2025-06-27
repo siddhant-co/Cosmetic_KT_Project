@@ -5,7 +5,6 @@ import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Swiper as SwiperType } from "swiper";
 
 type Testimonial = {
@@ -24,31 +23,8 @@ export default function TestimonialSlider({ testimonials }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
 
-  const handlePrev = () => {
-    swiperRef.current?.slidePrev();
-  };
-
-  const handleNext = () => {
-    swiperRef.current?.slideNext();
-  };
-
   return (
-    <div className="relative px-4 lg:px-10 bg-[#b0c9e8] py-10">
-      {/* Arrows */}
-      <button
-        onClick={handlePrev}
-        className="hidden md:flex absolute left-[-50px] top-1/2 -translate-y-1/2 z-10 bg-white text-[#1d3b60] hover:bg-[#163152] hover:text-white p-2 rounded-full shadow transition"
-      >
-        <ChevronLeft size={18} />
-      </button>
-      <button
-        onClick={handleNext}
-        className="hidden md:flex absolute right-[-50px] top-1/2 -translate-y-1/2 z-10 bg-white text-[#1d3b60] hover:bg-[#163152] hover:text-white p-2 rounded-full shadow transition"
-      >
-        <ChevronRight size={18} />
-      </button>
-
-      {/* Swiper */}
+    <div className="w-full bg-[#b0c9e8] py-12 overflow-hidden px-0 mx-0">
       <Swiper
         modules={[Autoplay]}
         spaceBetween={30}
@@ -67,9 +43,12 @@ export default function TestimonialSlider({ testimonials }: Props) {
         {testimonials.map((t, index) => (
           <SwiperSlide key={t.id}>
             <div
-              className={`transition-transform duration-300 ease-in-out bg-white rounded-xl shadow-md p-6 mx-auto min-h-[220px] max-w-md my-8 ${
-                index === activeIndex ? "scale-110" : "scale-90"
-              }`}
+              className={`
+                transition-transform duration-300 ease-in-out bg-white rounded-xl shadow-md p-6 mx-auto max-w-md my-10 
+                ${index === activeIndex ? "scale-110" : "scale-90"}
+
+                sm:h-[250px] sm:overflow-hidden
+              `}
             >
               <div className="flex items-center gap-3 mb-3">
                 <Image
@@ -84,7 +63,17 @@ export default function TestimonialSlider({ testimonials }: Props) {
                   <p className="text-sm text-gray-500">{t.role}</p>
                 </div>
               </div>
-              <p className="text-gray-700 text-sm">{t.description}</p>
+
+              <p
+                className={`
+                  text-gray-700 text-sm
+                  sm:max-h-[100px] sm:overflow-y-auto sm:pr-1
+                  sm:[-ms-overflow-style:none] sm:[scrollbar-width:none]
+                  sm:[&::-webkit-scrollbar]:hidden
+                `}
+              >
+                {t.description}
+              </p>
             </div>
           </SwiperSlide>
         ))}
