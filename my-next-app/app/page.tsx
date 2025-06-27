@@ -4,6 +4,12 @@ import HotListWrapper from "@/components/HotList/HotListWrapper";
 import TestProductCard from "@/components/ProductCard/TestProductCard";
 import FeaturesBanner from "@/components/ServersideComponent/FeaturesBanner/FeaturesBanner";
 import HeroBanner from "@/components/ServersideComponent/HeroBanner/HeroBanner";
+import WhyChooseUs from "@/components/ServersideComponent/WhyChooseUs/WhyChooseUs";
+
+
+
+
+
 import TestimonialsSection from "@/components/TestimonialsSection/TestimonialsSection";
 import TopCategories from "@/components/TopCategories/TopCategories";
 
@@ -20,6 +26,7 @@ export default async function HomePage() {
       <HotListWrapper />
       <TestProductCard></TestProductCard>
       <TopCategories />
+       <WhyChooseUs/>
       <TestimonialsSection />
       <FeaturesBanner />
     </div>
