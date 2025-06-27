@@ -1,3 +1,4 @@
+// components/Navbar/NavItems.tsx
 import Link from "next/link";
 import { getNavbarData, NavbarItem } from "@/api/NavbarApi";
 
@@ -6,19 +7,16 @@ const NavItems = async () => {
 
   try {
     const response = await getNavbarData();
-
-    // ✅ Now using `result` field from API
     if ("result" in response && Array.isArray(response.result)) {
       navItems = response.result;
     }
-
-    console.log("✅ navItems:", navItems);
   } catch (error) {
     console.error("❌ Failed to fetch navbar items:", error);
   }
 
   return (
-    <ul className="flex gap-6">
+    <ul className="flex gap-10">
+      {" "}
       {navItems.map((item) =>
         item.is_active ? (
           <li key={item.id}>

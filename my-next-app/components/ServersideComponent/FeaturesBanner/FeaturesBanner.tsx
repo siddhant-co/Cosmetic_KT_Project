@@ -14,17 +14,17 @@ interface Feature {
 
 const features: Feature[] = [
   {
-    src: "/shipping.png",
+    src: "/shipping.svg",
     title: "Free Shipping",
     desc: "On Orders Above ₹499",
   },
   {
-    src: "/return.png",
+    src: "/easyreturn.svg",
     title: "Easy Returns",
     desc: "15-Day Return Policy",
   },
   {
-    src: "/authenticate.png",
+    src: "/authenticate.svg",
     title: "100% Authentic",
     desc: "Products Sourced Directly",
   },
@@ -50,20 +50,40 @@ const FeaturesBanner = () => {
         ))}
 
         {/* Social Section */}
+        {/* Social Section */}
         <div className="text-center mt-4 md:mt-0 md:text-left">
           <p className="font-semibold mb-2">Follow us on social media</p>
-          <div className="flex justify-center md:justify-start gap-3 text-black">
-            <div className="bg-white rounded-full p-2">
-              <FaFacebookF size={14} />
+          <div className="flex justify-center md:justify-start gap-3">
+            {/* Facebook */}
+            <div className="group rounded-full bg-white p-2 transition duration-300 hover:bg-blue-600 cursor-pointer">
+              <FaFacebookF
+                size={14}
+                className="text-black group-hover:text-white transition"
+              />
             </div>
-            <div className="bg-white rounded-full p-2">
-              <FaInstagram size={14} />
+
+            {/* Instagram */}
+            <div className="group rounded-full bg-white p-2 transition duration-300 hover:bg-pink-500 cursor-pointer">
+              <FaInstagram
+                size={14}
+                className="text-black group-hover:text-white transition"
+              />
             </div>
-            <div className="bg-white rounded-full p-2">
-              <FaXTwitter size={14} />
+
+            {/* Twitter/X */}
+            <div className="group rounded-full bg-white p-2 transition duration-300 hover:bg-black cursor-pointer">
+              <FaXTwitter
+                size={14}
+                className="text-black group-hover:text-white transition"
+              />
             </div>
-            <div className="bg-white rounded-full p-2">
-              <FaPinterestP size={14} />
+
+            {/* Pinterest */}
+            <div className="group rounded-full bg-white p-2 transition duration-300 hover:bg-red-600 cursor-pointer">
+              <FaPinterestP
+                size={14}
+                className="text-black group-hover:text-white transition"
+              />
             </div>
           </div>
         </div>
