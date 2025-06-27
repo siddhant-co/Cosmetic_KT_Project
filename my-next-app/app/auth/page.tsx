@@ -9,11 +9,11 @@ export default function AuthPage() {
   const [showLogin, setShowLogin] = useState(true);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100  ">
-      <div className="w-full max-w-5xl mt-5 items-center justify-center bg-white rounded-xl shadow-md overflow-hidden flex  md:flex-row">
+    <div className="min-h-screen flex   bg-gray-100  ">
+      {/* <div className="w-full max-w-5xl mt-2   bg-white rounded-xl shadow-md overflow-hidden flex  md:flex-row"> */}
         {/* Left - Form Section */}
         <div className="w-full md:w-full  sm:p-4">
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-2">
             <button
               onClick={() => setShowLogin(true)}
               className={`px-4 py-2 rounded-l font-medium  cursor-pointer ${
@@ -46,7 +46,7 @@ export default function AuthPage() {
           </AnimatePresence>
         </div>
 
-      </div>
+      {/* </div> */}
     </div>
   );
 }

@@ -85,7 +85,7 @@ export default function CategorySlider({ categories }: Props) {
             key={category.id}
             className="keen-slider__slide rounded-md overflow-hidden shadow hover:shadow-md transition duration-300"
           >
-            <div className="relative w-full h-[400px]">
+            <div className="relative cursor-pointer w-full h-[400px]">
               {category.imageUrl ? (
                 <Image
                   src={category.imageUrl}

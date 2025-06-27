@@ -5,6 +5,7 @@ import "keen-slider/keen-slider.min.css";
 import ProductCard from "../ProductCard/ProductCard";
 import { Products } from "@/api/testProductCardApi"; // ✅ Updated type import
 import { CircleChevronLeft, CircleChevronRight } from "lucide-react";
+import TestProductCard from "../ProductCard/TestProductCard";
 
 // KeenSlider Animation Plugin
 const animation: KeenSliderPlugin = (slider) => {
@@ -86,7 +87,8 @@ const HotListClient = ({ products }: HotListClientProps) => {
         <div ref={sliderRef} className="keen-slider">
           {products.map((product) => (
             <div key={product.id} className="keen-slider__slide">
-              <ProductCard product={product} />
+              {/* <ProductCard product={product} /> */}
+              <TestProductCard></TestProductCard>
             </div>
           ))}
         </div>

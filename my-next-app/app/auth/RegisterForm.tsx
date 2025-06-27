@@ -9,6 +9,8 @@ export default function RegisterForm() {
     firstName: '',
     lastName: '',
     email: '',
+    password: '',
+    confirmPassword:'', 
     Bio: '',
     address: '',
   });
@@ -41,6 +43,8 @@ export default function RegisterForm() {
   const validateStep2 = () => {
     const newErrors: { [key: string]: string } = {};
     if (!form.email.trim()) newErrors.email = 'Email is required';
+    if (!form.password.trim()) newErrors.password = 'Password is required';
+    if (!form.confirmPassword.trim()) newErrors.confirmPassword = 'Confirm Password is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -75,7 +79,7 @@ export default function RegisterForm() {
   };
 
   return (
-    // <div className="max-w-3xl mx-auto p-2 border-[2px] border-gray-400 bg-white rounded-lg shadow-lg">
+
     <div className="w-full max-w-3xl mx-auto  md:p-4  border-[1px] border-gray-300 bg-white rounded-lg shadow-lg">
 
       <h2 className="text-2xl font-semibold text-center mb-3">Create an Account!</h2>
@@ -152,8 +156,10 @@ export default function RegisterForm() {
 
         {/* Step 2: Email */}
         {step === 2 && (
-          <div>
-            <label className="block font-semibold mb-1">Email Verification :</label>
+
+          <>
+             <div>
+            <label className="block font-semibold ">Email Verification and Password :</label>
             <input
               type="email"
               name="email"
@@ -165,7 +171,45 @@ export default function RegisterForm() {
               }`}
             />
             {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
-          </div>
+            </div>
+
+            {/* password */}
+            <div className='flex gap-4'>
+            <div className='w-1/2'>
+            <input
+              type="Password"
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleInputChange}
+              className={`w-full p-2 border rounded ${
+                errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'
+              }`}
+            />
+            {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
+              </div>
+              {/* confirm Password */}
+              
+            <div className='w-1/2'>
+            <input
+              type="Password"
+              name="confirmPassword"
+              placeholder="Password"
+              value={form.confirmPassword}
+              onChange={handleInputChange}
+              className={`w-full p-2 border rounded ${
+                errors.confirmPassword ? 'border-red-500 bg-red-50' : 'border-gray-300'
+              }`}
+            />
+            {errors.confirmPassword && <p className="text-sm text-red-500 mt-1">{errors.confirmPassword}</p>}
+            </div>
+
+              </div>
+                      
+
+          </>
+          
+   
         )}
 
         {/* Step 3: Bio */}
