@@ -32,7 +32,7 @@ const features: Feature[] = [
 
 const FeaturesBanner = () => {
   return (
-    <div className="bg-gradient-to-r from-purple-700 to-purple-400 text-white py-6 px-4">
+    <div className="bg-gradient-to-r from-[#1d3b60] to-purple-400 text-white py-6 px-4">
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
         {features.map((item, index) => (
           <div
@@ -55,7 +55,7 @@ const FeaturesBanner = () => {
           <p className="font-semibold mb-2">Follow us on social media</p>
           <div className="flex justify-center md:justify-start gap-3">
             {/* Facebook */}
-            <div className="group rounded-full bg-white p-2 transition duration-300 hover:bg-blue-600 cursor-pointer">
+            <div className="group rounded-full bg-white p-2 transition duration-300 hover:bg-blue cursor-pointer">
               <FaFacebookF
                 size={14}
                 className="text-black group-hover:text-white transition"

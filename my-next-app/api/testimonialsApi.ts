@@ -1,15 +1,19 @@
-import { Testimonial } from "@/types/testimonial";
+// api/ProductCardApi.ts
 
+import { Product } from "@/types/product";
 
+export async function fetchProducts(page: number, limit: number): Promise<Product[]> {
+  // Simulated product data for testing (you can replace with actual API call)
+  const sampleProducts: Product[] = Array.from({ length: limit }, (_, i) => ({
+    id: i + 1,
+    title: `Test Product ${i + 1}`,
+    image: "/sample-product.jpg",
+    rating: 4.5,
+    reviews: 120,
+    mrp: 999,
+    price: 699,
+    discount: "30%",
+  }));
 
-
-export async function getTestimonials(): Promise<Testimonial[]> {
-  const res = await fetch("https://ecom-testing.up.railway.app/frontend/testimonial", {
-    cache: "no-store",
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch testimonials");
-
-  const data = await res.json();
-  return data.testimonials.filter((t: Testimonial) => t.is_active);
+  return sampleProducts;
 }

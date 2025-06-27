@@ -2,14 +2,8 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --foreground: #1d3b60; /* ✅ Global text color */
+  --font-body: InterRegular, "InterRegular Fallback", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -21,6 +15,11 @@
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--foreground); /* ✅ Global default text color */
+  font-family: var(--font-body);
+}
+
+* {
+  font-family: var(--font-body);
+  color: inherit; /* Ensures all inherit global color */
 }
