@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { getFeatures } from "@/api/getFeaturesBanner";
 import {
   FaFacebookF,
   FaInstagram,
@@ -13,7 +12,7 @@ interface Feature {
   desc: string;
 }
 
-const staticFeatures: Feature[] = [
+const features: Feature[] = [
   {
     src: "/shipping.png",
     title: "Free Shipping",
@@ -31,19 +30,7 @@ const staticFeatures: Feature[] = [
   },
 ];
 
-const FeaturesBanner = async () => {
-  const apiData = await getFeatures();
-
-  // Map API structure to expected feature format
-  const features: Feature[] =
-    Array.isArray(apiData) && apiData.length > 0
-      ? apiData.map((item: any) => ({
-          src: item.icon || item.src || "/default.png",
-          title: item.title || "No Title",
-          desc: item.desc || item.description || "",
-        }))
-      : staticFeatures;
-
+const FeaturesBanner = () => {
   return (
     <div className="bg-gradient-to-r from-purple-700 to-purple-400 text-white py-6 px-4">
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">

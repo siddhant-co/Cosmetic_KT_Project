@@ -8,6 +8,8 @@ import TestimonialsSection from "@/components/TestimonialsSection/TestimonialsSe
 import TopCategories from "@/components/TopCategories/TopCategories";
 
 
+
+
 export default async function HomePage() {
   const banners = await fetchBanners(); // Server-side
 
@@ -17,7 +19,7 @@ export default async function HomePage() {
       <CategorySection />
       <HotListWrapper />
       <TestProductCard></TestProductCard>
-      <TopCategories/>
+      <TopCategories />
       <TestimonialsSection />
       <FeaturesBanner />
     </div>
