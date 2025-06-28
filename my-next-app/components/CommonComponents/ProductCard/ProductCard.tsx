@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import CartButton from "@/components/CommonComponents/CartButton/CartButton";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { addOrUpdateItem, syncCartWithServer } from "@/store/slices/cartSlice";
 
 interface ProductImage {
   image: string;
@@ -26,11 +28,28 @@ const ProductCard = ({ product }: Props) => {
   const secondImage = product.images.find((img) => img.sequence === 2)?.image;
 
   const [hovered, setHovered] = useState(false);
+  const dispatch = useAppDispatch();
+  const auth = useAppSelector((state) => state.auth);
+
+  const handleAddToCart = () => {
+    const item = {
+      id: product.id,
+      name: product.name,
+      quantity: 1,
+      sellingPrice: +product.sellingPrice,
+      basePrice: +product.basePrice,
+      image: product.images[0]?.image || "",
+    };
+
+    dispatch(addOrUpdateItem(item));
+    if (auth.token) {
+      dispatch(syncCartWithServer());
+    }
+  };
 
   return (
     <div className="group relative w-full max-w-[250px] mx-auto rounded-lg overflow-hidden shadow-md border border-pink-100 bg-white/70 backdrop-blur-md transition-all duration-300 hover:shadow-lg hover:scale-[1.015]">
       <div className="relative z-10 pb-4">
-        {/* 🖼️ Image section with hover effect */}
         <div
           className="bg-[#F3F6F7] px-3 pt-3 pb-2 rounded-t-lg"
           onMouseEnter={() => setHovered(true)}
@@ -53,12 +72,10 @@ const ProductCard = ({ product }: Props) => {
           </div>
         </div>
 
-        {/* 🏷️ Title */}
         <h3 className="mt-2 px-3 text-sm font-semibold text-center text-pink-800 line-clamp-2">
           {product.name}
         </h3>
 
-        {/* 💰 Price */}
         <div className="mt-1 flex justify-center gap-2 items-center">
           <span className="text-base font-bold text-pink-600">
             ₹{product.sellingPrice}
@@ -68,9 +85,8 @@ const ProductCard = ({ product }: Props) => {
           </span>
         </div>
 
-        {/* 🛒 Cart Button */}
         <div className="mt-3 flex justify-center px-3">
-          <CartButton onClick={() => console.log("Add to cart", product.id)} />
+          <CartButton onClick={handleAddToCart} />
         </div>
       </div>
     </div>
