@@ -8,6 +8,7 @@ import TopCategories from "@/components/TopCategories/TopCategories";
 
 import { fetchProducts } from "@/api/fetchProduct";
 import ProductCard from "@/components/CommonComponents/ProductCard/ProductCard";
+import ProductServer from "@/components/ServersideComponent/ProductServer/ProductServer";
 
 export default async function HomePage() {
   const { products } = await fetchProducts();
@@ -19,18 +20,7 @@ export default async function HomePage() {
       <TopCategories />
 
       {/* ✅ Products Section */}
-      <section className="px-4 py-10">
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Featured Products
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
-
+      <ProductServer />
       <WhyChooseUs />
       <TestimonialsSection />
       <FeaturesBanner />
