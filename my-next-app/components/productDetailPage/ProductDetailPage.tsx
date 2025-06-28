@@ -1,145 +1,12 @@
-// 'use client';
-
-// import { useState } from 'react';
-// import Image from 'next/image';
-// import { Product, Variant } from '@/api/ProductCardApi';
-
-// type Props = {
-//   product: Product;
-// };
-
-// export default function ProductDetailClient({ product }: Props) {
-//   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(
-//     product.variants?.[0] || null
-//   );
-
-//   const [selectedImage, setSelectedImage] = useState<string>(
-//     selectedVariant?.images?.[0]?.url || product.imageUrl
-//   );
-
-//   const allImages: string[] =
-//     selectedVariant?.images?.map((img) => img.url) ||
-//     (Array.isArray(product.images) ? product.images : [product.imageUrl]);
-
-//   const handleVariantSelect = (variant: Variant) => {
-//     setSelectedVariant(variant);
-//     setSelectedImage(variant.images?.[0]?.url || product.imageUrl);
-//   };
-
-//   return (
-//     <div className="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-2 gap-10">
-//       {/* Left - Image Gallery */}
-//       <div>
-//         <div className="w-full aspect-square relative rounded-lg overflow-hidden border">
-//           <Image
-//             src={selectedImage}
-//             alt={product.name}
-//             fill
-//             className="object-contain"
-//           />
-//         </div>
-
-//         <div className="flex gap-2 mt-4">
-//           {allImages.map((img, idx) => (
-//             <div
-//               key={idx}
-//               onClick={() => setSelectedImage(img)}
-//               className={`w-20 h-20 border rounded-lg overflow-hidden cursor-pointer ${
-//                 selectedImage === img ? 'ring-2 ring-purple-600' : ''
-//               }`}
-//             >
-//               <Image
-//                 src={img}
-//                 alt={`Image ${idx + 1}`}
-//                 width={80}
-//                 height={80}
-//                 className="object-contain w-full h-full"
-//               />
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-
-//       {/* Right - Product Info */}
-//       <div className="space-y-4">
-//         <h1 className="text-2xl font-semibold">{product.name}</h1>
-//         <p className="text-gray-600">{product.description}</p>
-
-//         {/* Price */}
-//         <div className="space-y-1">
-//           <div className="text-2xl font-bold text-gray-800">
-//             ₹{selectedVariant?.price ?? product.sellingPrice}
-//           </div>
-//           <div className="text-green-600 font-semibold">
-//             {Math.round(
-//               ((product.oldPrice -
-//                 (selectedVariant?.price ?? product.sellingPrice)) /
-//                 product.oldPrice) *
-//                 100
-//             )}
-//             % Off
-//           </div>
-//           <div className="text-sm text-gray-500">
-//             MRP <s>₹{product.oldPrice}</s> Inclusive of all taxes
-//           </div>
-//         </div>
-
-//         {/* Variants */}
-//         {product.variants?.length > 0 && (
-//           <div className="space-y-2">
-//             <h3 className="font-semibold">Select Variant:</h3>
-//             <div className="flex gap-2 flex-wrap">
-//               {product.variants.map((variant) => (
-//                 <button
-//                   key={variant.id}
-//                   onClick={() => handleVariantSelect(variant)}
-//                   className={`px-4 py-2 border rounded-md text-sm ${
-//                     selectedVariant?.id === variant.id
-//                       ? 'border-purple-600 bg-purple-100 text-purple-700'
-//                       : 'border-gray-300 text-gray-700'
-//                   }`}
-//                 >
-//                   {variant.name}
-//                 </button>
-//               ))}
-//             </div>
-//           </div>
-//         )}
-
-//         {/* Action Buttons */}
-//         <div className="flex gap-4 mt-4">
-//           <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-md font-semibold">
-//             Add to Bag
-//           </button>
-//           <button className="border border-gray-300 px-6 py-2 rounded-md font-semibold">
-//             ❤️ Wishlist
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
-// ///
-
-
-//
-
-
-
-
 'use client';
-
 import { useState } from 'react';
 import Image from 'next/image';
-import { Products, Variant } from '@/api/testProductCardApi';
+
 import ProductTabs from './ProductTabs';
+import { Product, Variant } from '@/types/product';
 
 type Props = {
-  product: Products;
+  product: Product;
 };
 
 export default function ProductDetailClient({ product }: Props) {
@@ -148,16 +15,22 @@ export default function ProductDetailClient({ product }: Props) {
   );
 
   const [selectedImage, setSelectedImage] = useState<string>(
-    selectedVariant?.images?.[0]?.url || product.image
+    selectedVariant?.images?.[0]?.url || product.images?.[0]?.image || '/placeholder.png'
+
   );
 
-  const allImages: string[] =
-    selectedVariant?.images?.map((img) => img.url) || [product.image];
 
-  const handleVariantSelect = (variant: Variant) => {
-    setSelectedVariant(variant);
-    setSelectedImage(variant.images?.[0]?.url || product.image);
+  const getAllImages = (): string[] => {
+    if (selectedVariant?.images?.length) {
+      return selectedVariant.images.map((img) => img.url);
+    } else if (product.images?.length) {
+      return product.images.map((img) => img.image);
+    }
+    return ['/placeholder.png'];
   };
+  
+  const allImages = getAllImages();
+  
 
   const sellingPrice = selectedVariant?.price;
   const basePrice = selectedVariant?.basePrice || sellingPrice;
@@ -165,6 +38,10 @@ export default function ProductDetailClient({ product }: Props) {
     basePrice && sellingPrice
       ? Math.round(((basePrice - sellingPrice) / basePrice) * 100)
       : 0;
+
+  function handleVariantSelect(variant: Variant): void {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <div className='bg-[#f3f4f6]'>
