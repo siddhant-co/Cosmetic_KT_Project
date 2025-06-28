@@ -2,6 +2,7 @@ export interface ProductImage {
   id: number;
   image: string;
   sequence: number;
+  productId: number;
 }
 
 export interface ProductVariant {

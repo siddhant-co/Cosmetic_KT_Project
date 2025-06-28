@@ -3,19 +3,20 @@
 import { useState } from "react";
 import Image from "next/image";
 import CartButton from "@/components/CommonComponents/CartButton/CartButton";
+import { Product } from "@/types/product";
 
-interface ProductImage {
-  image: string;
-  sequence: number;
-}
+// interface ProductImage {
+//   image: string;
+//   sequence: number;
+// }
 
-interface Product {
-  id: number;
-  name: string;
-  sellingPrice: string;
-  basePrice: string;
-  images: ProductImage[];
-}
+// interface Product {
+//   id: number;
+//   name: string;
+//   sellingPrice: string;
+//   basePrice: string;
+//   images: ProductImage[];
+// }
 
 interface Props {
   product: Product;
