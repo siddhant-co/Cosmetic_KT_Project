@@ -1,35 +1,26 @@
-// types/product.ts
-
-import { ReactNode } from "react";
-
-export type ProductImage = {
+export interface ProductImage {
+  id: number;
   image: string;
-};
-
-export interface Variant {
-  Price: any;
-  specification: any;
-  basePrice: number;
-  id: number;
-  name: string;
-  price: number;
-  stock: number;
-  images: { url: string }[];
-  variantId:number
+  sequence: number;
 }
-export type ProductCategory = {
-  name: string;
-};
 
-export type Product = {
-  description: ReactNode;
+export interface ProductVariant {
+  image: string;
+}
+
+export interface ProductCategory {
   id: number;
   name: string;
-  slug: string;
+  imageUrl: string;
+  banner: string;
+}
+
+export interface Product {
+  id: number;
+  name: string;
   basePrice: string;
   sellingPrice: string;
-  priceDifferencePercent: number;
-  category: ProductCategory;
   images: ProductImage[];
-  variants: Variant[];
-};
+  variants: ProductVariant[];
+  category: ProductCategory;
+}

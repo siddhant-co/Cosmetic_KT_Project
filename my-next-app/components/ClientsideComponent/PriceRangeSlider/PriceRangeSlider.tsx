@@ -1,5 +1,3 @@
-
-
 // 'use client';
 
 // import { Range, getTrackBackground } from 'react-range';
@@ -61,10 +59,9 @@
 
 // export default PriceRangeSlider;
 
+"use client";
 
-'use client';
-
-import { Range, getTrackBackground } from 'react-range';
+import { Range, getTrackBackground } from "react-range";
 
 type Props = {
   min: number;
@@ -97,7 +94,7 @@ const PriceRangeSlider = ({ min, max, values, onChange }: Props) => {
               ...props.style,
               background: getTrackBackground({
                 values,
-                colors: ['#ccc', '#f97316', '#ccc'],
+                colors: ["#ccc", "#f97316", "#ccc"],
                 min,
                 max,
               }),

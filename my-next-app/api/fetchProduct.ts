@@ -1,19 +1,13 @@
-// lib/api/products.ts
-
+// ServerSide/fetchProducts.ts
+import { apiCore } from "@/api/ApiCore";
 import { Product } from "@/types/product";
 
-export async function getProducts(): Promise<Product[]> {
-  const res = await fetch('https://ecom-testing.up.railway.app/product?page=1&limit=100', {
-    cache: 'no-store', // disable caching for SSR
-  });
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch products');
-  }
-
-  const data = await res.json();
-  return data.products;
-
-
+export interface GetProductsResponse {
+  success: boolean;
+  count: number;
+  products: Product[];
 }
 
+export const fetchProducts = async (): Promise<GetProductsResponse> => {
+  return await apiCore("/product", "GET");
+};
