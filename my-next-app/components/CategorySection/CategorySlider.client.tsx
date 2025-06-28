@@ -5,6 +5,7 @@ import "keen-slider/keen-slider.min.css";
 import Image from "next/image";
 import { CircleChevronLeft, CircleChevronRight } from "lucide-react";
 import { Category } from "@/types/category";
+import Link from "next/link";
 
 interface Props {
   categories: Category[];
@@ -78,33 +79,34 @@ export default function CategorySlider({ categories }: Props) {
         <CircleChevronRight size={30} />
       </button>
 
-      {/* Slider */}
-      <div ref={sliderRef} className="keen-slider px-1">
-        {categories.map((category) => (
-          <div
-            key={category.id}
-            className="keen-slider__slide rounded-md overflow-hidden shadow hover:shadow-md transition duration-300"
-          >
-            <div className="relative cursor-pointer w-full h-[400px]">
-              {category.imageUrl ? (
-                <Image
-                  src={category.imageUrl}
-                  alt={category.name}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
-                  No Image
-                </div>
-              )}
-            </div>
-            <div className="bg-gray-100 text-center py-2">
-              <h3 className="text-lg font-semibold">{category.name}</h3>
-            </div>
+<div ref={sliderRef} className="keen-slider px-1">
+  {categories.map((category) => (
+    <Link
+      href={`/category/${category.id}`}
+      key={category.id}
+      className="keen-slider__slide rounded-md overflow-hidden shadow hover:shadow-md transition duration-300 cursor-pointer block"
+    >
+      <div className="relative w-full h-[400px]">
+        {category.imageUrl ? (
+          <Image
+            src={category.imageUrl}
+            alt={category.name}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
+            No Image
           </div>
-        ))}
+        )}
       </div>
+      <div className="bg-gray-100 text-center py-2">
+        <h3 className="text-lg font-semibold">{category.name}</h3>
+      </div>
+    </Link>
+  ))}
+</div>
+
     </div>
   );
 }
