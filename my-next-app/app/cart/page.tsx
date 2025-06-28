@@ -1,19 +1,27 @@
+// app/cart/page.tsx
 "use client";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { removeFromCart } from "@/store/slices/cartSlice";
+
 import Image from "next/image";
 import { FiTrash2 } from "react-icons/fi";
+import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
+import {
+  selectCartItems,
+  removeFromCart,
+  incrementQuantity,
+  decrementQuantity,
+  clearCart,
+} from "@/store/slices/cartSlice";
 
 const CartPage = () => {
-  const items = useAppSelector((state) => state.cart.items);
   const dispatch = useAppDispatch();
-
+  const cartItems = useAppSelector(selectCartItems);
   const shippingCost = 5;
-  const subtotal = items.reduce(
+  const tax = 0;
+
+  const subtotal = cartItems.reduce(
     (acc, item) => acc + item.sellingPrice * item.quantity,
     0
   );
-  const tax = 0;
   const total = subtotal + shippingCost + tax;
 
   return (
@@ -21,8 +29,9 @@ const CartPage = () => {
       <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
 
       <div className="flex flex-col lg:flex-row gap-10">
+        {/* Left: Cart Items */}
         <div className="flex-1">
-          {items.map((item) => (
+          {cartItems.map((item) => (
             <div
               key={item.id}
               className="flex items-start justify-between mb-6"
@@ -45,18 +54,38 @@ const CartPage = () => {
                   </button>
                 </div>
               </div>
+
               <div className="text-right">
-                <p className="font-semibold text-xl">₹{item.sellingPrice}</p>
+                <button
+                  onClick={() => dispatch(clearCart())}
+                  className="text-blue-600 text-sm font-medium mb-2 hover:underline"
+                >
+                  Clear all
+                </button>
+                <p className="font-semibold text-xl">
+                  ₹{item.sellingPrice * item.quantity}
+                </p>
                 <div className="mt-2 flex items-center border rounded overflow-hidden w-fit">
-                  <button className="px-2 py-1 border-r">−</button>
+                  <button
+                    onClick={() => dispatch(decrementQuantity(item.id))}
+                    className="px-2 py-1 border-r"
+                  >
+                    −
+                  </button>
                   <span className="px-3">{item.quantity}</span>
-                  <button className="px-2 py-1 border-l">+</button>
+                  <button
+                    onClick={() => dispatch(incrementQuantity(item.id))}
+                    className="px-2 py-1 border-l"
+                  >
+                    +
+                  </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
+        {/* Right: Order Summary */}
         <div className="w-full lg:w-[350px] bg-gray-100 p-6 rounded-lg shadow">
           <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
           <div className="flex justify-between text-sm mb-2">
@@ -71,7 +100,9 @@ const CartPage = () => {
             <span>Tax</span>
             <span className="font-semibold">₹{tax}</span>
           </div>
+
           <hr className="my-2" />
+
           <div className="flex justify-between text-base font-semibold mb-4">
             <span>Total</span>
             <span>₹{total}</span>
@@ -80,6 +111,7 @@ const CartPage = () => {
           <button className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition">
             Checkout
           </button>
+
           <button className="w-full mt-3 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-sm">
             Continue Shopping
           </button>

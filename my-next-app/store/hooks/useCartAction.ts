@@ -21,13 +21,19 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    // ✅ For guest/local cart
     addToCart: (state, action: PayloadAction<CartItem>) => {
-      const existing = state.items.find((item) => item.id === action.payload.id);
-      if (existing) {
-        existing.quantity += action.payload.quantity;
+      const existingItem = state.items.find((item) => item.id === action.payload.id);
+      if (existingItem) {
+        existingItem.quantity += action.payload.quantity;
       } else {
         state.items.push(action.payload);
       }
+    },
+
+    // ✅ For syncing server cart
+    setCart: (state, action: PayloadAction<CartItem[]>) => {
+      state.items = action.payload;
     },
 
     removeFromCart: (state, action: PayloadAction<number>) => {
@@ -36,35 +42,27 @@ const cartSlice = createSlice({
 
     incrementQuantity: (state, action: PayloadAction<number>) => {
       const item = state.items.find((item) => item.id === action.payload);
-      if (item) {
-        item.quantity += 1;
-      }
+      if (item) item.quantity += 1;
     },
 
     decrementQuantity: (state, action: PayloadAction<number>) => {
       const item = state.items.find((item) => item.id === action.payload);
-      if (item && item.quantity > 1) {
-        item.quantity -= 1;
-      }
+      if (item && item.quantity > 1) item.quantity -= 1;
     },
 
     clearCart: (state) => {
       state.items = [];
-    },
-
-    setCart: (state, action: PayloadAction<CartItem[]>) => {
-      state.items = action.payload;
     },
   },
 });
 
 export const {
   addToCart,
+  setCart,
   removeFromCart,
   incrementQuantity,
   decrementQuantity,
   clearCart,
-  setCart,
 } = cartSlice.actions;
 
 export const selectCartItems = (state: { cart: CartState }) => state.cart.items;

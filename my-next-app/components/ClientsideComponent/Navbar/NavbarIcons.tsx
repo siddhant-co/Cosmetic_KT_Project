@@ -3,7 +3,7 @@
 import UserAvatar from "@/components/UserAvatar/UserAvatar";
 import { FiHeart, FiShoppingBag } from "react-icons/fi";
 import Link from "next/link";
-import { useAppSelector } from "@/store/hooks";
+import { useAppSelector } from "@/store/hooks/hooks";
 
 const NavbarIcons = () => {
   const cartCount = useAppSelector((state) => state.cart.items.length);
