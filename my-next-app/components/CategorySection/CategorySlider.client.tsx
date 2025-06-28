@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-<<<<<<< HEAD
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -11,11 +10,6 @@ interface Category {
   name: string;
   imageUrl: string;
 }
-=======
-import { CircleChevronLeft, CircleChevronRight } from "lucide-react";
-import { Category } from "@/types/category";
-import Link from "next/link";
->>>>>>> 6b7aeb192928e1c05052f9344f7324fcf8ac3423
 
 interface Props {
   categories: Category[];
@@ -68,7 +62,6 @@ export default function CategorySlider({ categories }: Props) {
                 }}
               />
 
-<<<<<<< HEAD
               {/* 🖼 Main Image (zoom + shadow only on image) */}
               <div className="relative z-10 flex justify-center h-[300px] sm:h-[280px] items-start pt-6">
                 <Image
@@ -88,36 +81,6 @@ export default function CategorySlider({ categories }: Props) {
           </SwiperSlide>
         ))}
       </Swiper>
-=======
-<div ref={sliderRef} className="keen-slider px-1">
-  {categories.map((category) => (
-    <Link
-      href={`/category/${category.id}`}
-      key={category.id}
-      className="keen-slider__slide rounded-md overflow-hidden shadow hover:shadow-md transition duration-300 cursor-pointer block"
-    >
-      <div className="relative w-full h-[400px]">
-        {category.imageUrl ? (
-          <Image
-            src={category.imageUrl}
-            alt={category.name}
-            fill
-            className="object-cover"
-          />
-        ) : (
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
-            No Image
-          </div>
-        )}
-      </div>
-      <div className="bg-gray-100 text-center py-2">
-        <h3 className="text-lg font-semibold">{category.name}</h3>
-      </div>
-    </Link>
-  ))}
-</div>
-
->>>>>>> 6b7aeb192928e1c05052f9344f7324fcf8ac3423
     </div>
   );
 }
