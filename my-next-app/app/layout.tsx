@@ -4,6 +4,7 @@ import { Geist, Geist_Mono, Josefin_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/ServersideComponent/Navbar/NavbarComponent";
 import ReduxProviderWrapper from "@/providers/ReduxProviderWrapper";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,6 +40,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${josefinSans.variable} antialiased`}
       >
         <ReduxProviderWrapper>
+        <Toaster position="top-right" />
           <Navbar />
           <main className="pt-0">{children}</main>
         </ReduxProviderWrapper>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function RegisterForm() {
   const [step, setStep] = useState(1);
@@ -12,7 +13,7 @@ export default function RegisterForm() {
     password: '',
     confirmPassword:'', 
     Bio: '',
-    address: '',
+
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -56,21 +57,53 @@ export default function RegisterForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = (e: React.FormEvent) => {
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (step === 1 && !validateStep1()) return;
     if (step === 2 && !validateStep2()) return;
     if (step === 3 && !validateStep3()) return;
-
-    if (step < 3) {
-      setStep(step + 1);
+  
+    if (step === 3) {
+      try {
+        const formData = new FormData();
+        const profile = {
+          firstName: form.firstName,
+          lastName: form.lastName,
+          bio: form.Bio,
+        };
+        formData.append('email', form.email);
+        formData.append('password', form.password);
+        formData.append('profile', JSON.stringify(profile));
+        if (imageFile) formData.append('image', imageFile);
+  
+        toast.loading('Submitting...', { id: 'register' });
+  
+        const res = await fetch('https://ecom-testing.up.railway.app/auth/register', {
+          method: 'POST',
+          body: formData,
+        });
+  
+        if (!res.ok) {
+          const errorData = await res.json();
+          toast.error(errorData.message || 'Registration failed', { id: 'register' });
+          return;
+        }
+  
+        const data = await res.json();
+        toast.success('Registered successfully!', { id: 'register' });
+  
+        console.log('Response:', data);
+        // Optionally reset the form or navigate
+      } catch (error) {
+        console.error('Registration error:', error);
+        toast.error('Something went wrong', { id: 'register' });
+      }
     } else {
-      // Final submit logic here
-      alert('✅ Form submitted successfully!');
-      console.log('Submitted:', form, imageFile);
+      setStep(step + 1);
     }
   };
+  
 
   const handleBack = () => {
     if (step > 1) {

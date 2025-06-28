@@ -3,21 +3,25 @@
 import { useState } from "react";
 import Image from "next/image";
 import CartButton from "@/components/CommonComponents/CartButton/CartButton";
+<<<<<<< HEAD
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { addOrUpdateItem, syncCartWithServer } from "@/store/slices/cartSlice";
+=======
+import { Product } from "@/types/product";
+>>>>>>> 0f3053d6f82fed130932a558ef0ec8c86299c624
 
-interface ProductImage {
-  image: string;
-  sequence: number;
-}
+// interface ProductImage {
+//   image: string;
+//   sequence: number;
+// }
 
-interface Product {
-  id: number;
-  name: string;
-  sellingPrice: string;
-  basePrice: string;
-  images: ProductImage[];
-}
+// interface Product {
+//   id: number;
+//   name: string;
+//   sellingPrice: string;
+//   basePrice: string;
+//   images: ProductImage[];
+// }
 
 interface Props {
   product: Product;

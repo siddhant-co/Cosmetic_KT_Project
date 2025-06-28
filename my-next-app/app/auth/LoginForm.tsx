@@ -6,8 +6,9 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { loginSuccess } from '@/store/slices/authSlice';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react';
+import ForgotPassword from '../ForgotPassword/page';
+
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -66,104 +68,119 @@ export default function LoginPage() {
   };
 
   return (
+    <div className="w-full max-w-5xl flex mx-auto md:p-4 border border-gray-300 bg-white rounded-lg shadow-lg">
+      {/* Left Side */}
+      <div className="w-full md:w-1/2 p-5 justify-center flex flex-col">
+        {showForgotPassword ? (
+          <>
+            <button
+              onClick={() => setShowForgotPassword(false)}
+              className="text-sm text-gray-600 hover:underline mb-4"
+            >
+              ← Back to Login
+            </button>
+            <ForgotPassword />
+          </>
+        ) : (
+          <>
+            <h2 className="text-3xl font-bold text-gray-900 mb-1">Sign in</h2>
 
-   
-      <div className="w-full max-w-5xl flex mx-auto  md:p-4  border-[1px] border-gray-300 bg-white rounded-lg shadow-lg">
-        {/* Left Side - Form */}
-        <div className="w-full md:w-1/2 p-5">
-          <h2 className="text-3xl font-bold text-gray-900 mb-1">Sign in</h2>
-
-          <form onSubmit={handleLogin}>
-            {/* Email */}
-            <div className="mb-2">
-              <label className="block text-sm mb-1 text-gray-700">Email</label>
-              <input
-                type="email"
-                className={`w-full p-3 rounded-lg border ${
-                  errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                }`}
-                placeholder="admin@gmail.com"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setErrors((prev) => ({ ...prev, email: '' }));
-                }}
-              />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-            </div>
-
-            {/* Password */}
-            <div className="mb-2">
-              <label className="block text-sm mb-1 text-gray-700">Password</label>
-              <div className="relative">
+            <form onSubmit={handleLogin}>
+              {/* Email */}
+              <div className="mb-2">
+                <label className="block text-sm mb-1 text-gray-700">Email</label>
                 <input
-                  type={showPassword ? 'text' : 'password'}
-                  className={`w-full p-3 pr-10 rounded-lg border ${
-                    errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                  type="email"
+                  className={`w-full p-2 rounded border ${
+                    errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
                   }`}
-                  placeholder="••••••••"
-                  value={password}
+                  placeholder="admin@gmail.com"
+                  value={email}
                   onChange={(e) => {
-                    setPassword(e.target.value);
-                    setErrors((prev) => ({ ...prev, password: '' }));
+                    setEmail(e.target.value);
+                    setErrors((prev) => ({ ...prev, email: '' }));
                   }}
                 />
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              </div>
+
+              {/* Password */}
+              <div className="mb-2">
+                <label className="block text-sm mb-1 text-gray-700">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className={`w-full p-2 pr-10 rounded border ${
+                      errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                    }`}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setErrors((prev) => ({ ...prev, password: '' }));
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-3 text-gray-400"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+              </div>
+
+              {/* Forgot Password Toggle */}
+              <div className="mb-4 text-right">
                 <button
                   type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-3 top-3 text-gray-400"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-purple-600 text-sm hover:underline cursor-pointer"
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  Forgot Password?
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-            </div>
 
-            {/* Forgot Password Link */}
-            <div className="mb-4 text-right">
-              <Link href="/forgot-password" className="text-purple-600 text-sm hover:underline">
-                Forgot Password?
-              </Link>
-            </div>
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
+              >
+                {loading ? 'Signing in...' : 'Sign in'}
+              </button>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
+              {/* Divider */}
+              <div className="flex items-center my-2">
+                <hr className="flex-grow border-gray-300" />
+                <span className="px-4 text-gray-500 text-sm">or</span>
+                <hr className="flex-grow border-gray-300" />
+              </div>
 
-            {/* Divider */}
-            <div className="flex items-center my-2">
-              <hr className="flex-grow border-gray-300" />
-              <span className="px-4 text-gray-500 text-sm">or</span>
-              <hr className="flex-grow border-gray-300" />
-            </div>
-
-            {/* Guest Button */}
-            <button
-              type="button"
-              disabled={loading}
-              className="w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
-            >
-              Continue as Guest
-            </button>
-          </form>
-        </div>
-
-        {/* Right Side - Image */}
-        <div className="hidden md:flex w-1/2 items-center justify-center bg-[#000842]">
-          <Image
-            src="https://readymadeui-nextjs-ecommerce-site-3.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fsignin-image.webp&w=1080&q=75"
-            alt="Login Illustration"
-            width={400}
-            height={400}
-            className="rounded-lg"
-          />
-        </div>
+              {/* Guest */}
+              <button
+                type="button"
+                disabled={loading}
+                className="w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
+              >
+                Continue as Guest
+              </button>
+            </form>
+          </>
+        )}
       </div>
-    // </div>
+
+      {/* Right Side - Image */}
+      <div className="hidden md:flex w-1/2 items-center justify-center bg-[#000842]">
+        <Image
+          src="https://readymadeui-nextjs-ecommerce-site-3.vercel.app/_next/image?url=%2Fassets%2Fimages%2Fsignin-image.webp&w=1080&q=75"
+          alt="Login Illustration"
+          width={400}
+          height={400}
+          className="rounded-lg"
+        />
+      </div>
+    </div>
   );
 }

@@ -2,17 +2,28 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-
-
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 import { RootState } from '@/store/store';
-import { resetPasswordFailure, resetPasswordFlowReset, resetPasswordStart, resetPasswordSuccess, resetRequestFailure, resetRequestStart, resetRequestSuccess, verifyOtpFailure, verifyOtpStart, verifyOtpSuccess } from '@/store/slices/authSlice';
-
+import {
+  resetPasswordFailure,
+  resetPasswordFlowReset,
+  resetPasswordStart,
+  resetPasswordSuccess,
+  resetRequestFailure,
+  resetRequestStart,
+  resetRequestSuccess,
+  verifyOtpFailure,
+  verifyOtpStart,
+  verifyOtpSuccess
+} from '@/store/slices/authSlice';
 
 
 export default function ForgotPassword() {
   const dispatch = useDispatch();
+  const router = useRouter();
+
   const { resetLoading, resetError, resetStep, resetSuccess } = useSelector(
     (state: RootState) => state.auth
   );
@@ -21,19 +32,19 @@ export default function ForgotPassword() {
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
-  // Reset flow when component mounts
   useEffect(() => {
     dispatch(resetPasswordFlowReset());
   }, [dispatch]);
 
-  // Clear inputs when reset succeeds
+  // Show toast and redirect after successful password reset
   useEffect(() => {
-    if (resetSuccess) {
-      setEmail('');
-      setOtp('');
-      setNewPassword('');
+    if (resetSuccess && resetStep === 3) {
+      toast.success('Password reset successful! Redirecting to login...');
+      setTimeout(() => {
+        router.push('/auth'); 
+      }, 2000);
     }
-  }, [resetSuccess]);
+  }, [resetSuccess, resetStep, router]);
 
   const handleSendEmail = async () => {
     dispatch(resetRequestStart());
@@ -48,13 +59,7 @@ export default function ForgotPassword() {
         }
       );
 
-      let data;
-      try {
-        data = await res.json();
-      } catch {
-        data = {};
-      }
-
+      const data = await res.json();
       if (res.ok) {
         dispatch(resetRequestSuccess());
       } else {
@@ -78,13 +83,7 @@ export default function ForgotPassword() {
         }
       );
 
-      let data;
-      try {
-        data = await res.json();
-      } catch {
-        data = {};
-      }
-
+      const data = await res.json();
       if (res.ok) {
         dispatch(verifyOtpSuccess());
       } else {
@@ -108,13 +107,7 @@ export default function ForgotPassword() {
         }
       );
 
-      let data;
-      try {
-        data = await res.json();
-      } catch {
-        data = {};
-      }
-
+      const data = await res.json();
       if (res.ok) {
         dispatch(resetPasswordSuccess());
       } else {
@@ -133,19 +126,24 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 border rounded space-y-4 bg-white shadow">
+    <div className="w-full mx-auto p-4 rounded space-y-4 bg-white shadow ">
       {resetStep === 1 && (
         <>
           <p>Enter your email to receive a verification OTP.</p>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className="w-full p-2 border rounded"
-            disabled={resetLoading}
-            autoComplete="email"
-          />
+          <div className="">
+
+  <input
+    type="email"
+    placeholder="Enter your email"
+    value={email}
+    onChange={e => setEmail(e.target.value)}
+    className="w-full p-2 rounded border"
+    disabled={resetLoading} 
+    autoComplete="email"
+            />
+    
+</div>
+    
           <button
             onClick={handleSendEmail}
             disabled={!email || resetLoading}
@@ -159,15 +157,17 @@ export default function ForgotPassword() {
       {resetStep === 2 && (
         <>
           <p>Enter the OTP sent to your email.</p>
+          <div className="w-full max-w-md px-4 py-2 rounded-md border border-gray-300 bg-white focus-within:ring-0.5 focus-within:ring-black focus-within:border-black shadow-sm transition-all flex items-center gap-3">
           <input
             type="text"
             placeholder="OTP"
             value={otp}
             onChange={e => setOtp(e.target.value)}
-            className="w-full p-2 border rounded"
+                className="w-full bg-transparent  outline-none placeholder-gray-400 text-gray-700 text-sm"
             disabled={resetLoading}
             autoComplete="one-time-code"
-          />
+            />
+            </div>
           <button
             onClick={handleVerifyOtp}
             disabled={!otp || resetLoading}
@@ -181,15 +181,17 @@ export default function ForgotPassword() {
       {resetStep === 3 && (
         <>
           <p>Enter your new password.</p>
+          <div className="w-full max-w-md px-4 py-2 rounded-md border border-gray-300 bg-white focus-within:ring-0.5 focus-within:ring-black focus-within:border-black shadow-sm transition-all flex items-center gap-3">
           <input
             type="password"
             placeholder="New Password"
             value={newPassword}
             onChange={e => setNewPassword(e.target.value)}
-            className="w-full p-2 border rounded"
+           className="w-full bg-transparent  outline-none placeholder-gray-400 text-gray-700 text-sm"
             disabled={resetLoading}
             autoComplete="new-password"
-          />
+            />
+            </div>
           <button
             onClick={handleResetPassword}
             disabled={!newPassword || resetLoading}
@@ -201,20 +203,16 @@ export default function ForgotPassword() {
       )}
 
       {resetSuccess && (
-        <>
-          <p className="text-green-600 font-semibold">
-            Password reset successful! You can now log in.
-          </p>
-          <button
-            onClick={handleResetFlow}
-            className="w-full bg-gray-300 py-2 rounded"
-          >
-            Reset again
-          </button>
-        </>
+        <p className="text-green-600 font-semibold text-center">
+          Password reset successful!
+        </p>
       )}
 
-      {resetError && <p className="text-red-600">{resetError}</p>}
+      {resetError && (
+        <p className="text-red-600 text-sm font-medium text-center">
+          {resetError}
+        </p>
+      )}
     </div>
   );
 }
