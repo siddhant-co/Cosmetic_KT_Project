@@ -26,20 +26,17 @@ const MobileMenu = () => {
   }, []);
 
   return (
-    <div className="md:hidden relative z-50">
-      {/* Toggle Button */}
+    <div className="relative z-50">
       <button onClick={() => setOpen(!open)} aria-label="Toggle Menu">
         {open ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* Curtain Menu */}
       <div
         className={`fixed top-0 left-0 w-full h-screen bg-white z-50 transform transition-transform duration-500 ease-in-out ${
           open ? "translate-y-0" : "-translate-y-full"
         }`}
       >
         <div className="p-4">
-          {/* Close button at top right */}
           <div className="flex justify-end">
             <button
               onClick={() => setOpen(false)}
@@ -50,7 +47,6 @@ const MobileMenu = () => {
             </button>
           </div>
 
-          {/* Nav Items */}
           <ul className="flex flex-col gap-4 mt-6">
             {navItems.map((item) => (
               <li key={item.id}>

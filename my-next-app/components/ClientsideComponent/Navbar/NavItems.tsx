@@ -1,4 +1,3 @@
-// components/Navbar/NavItems.tsx
 import Link from "next/link";
 import { getNavbarData } from "@/api/NavbarApi";
 import { NavItem } from "@/types/nav";
@@ -16,7 +15,7 @@ const NavItems = async () => {
   }
 
   return (
-    <ul className="hidden md:flex gap-10">
+    <ul className="flex gap-10">
       {navItems.map((item: NavItem) =>
         item.is_active ? (
           <li key={item.id}>

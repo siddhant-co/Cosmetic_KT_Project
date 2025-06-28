@@ -1,6 +1,4 @@
-// components/Navbar/NavbarIconsWrapper.tsx
 "use client";
-
 import NavbarIcons from "./NavbarIcons";
 
 const NavbarIconsWrapper = () => {

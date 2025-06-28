@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// Import Josefin Sans along with your existing fonts
+import { Geist, Geist_Mono, Josefin_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/ServersideComponent/Navbar/NavbarComponent";
 import ReduxProviderWrapper from "@/providers/ReduxProviderWrapper";
@@ -12,6 +13,13 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Define Josefin Sans
+const josefinSans = Josefin_Sans({
+  variable: "--font-josefin-sans", // Define a CSS variable for Josefin Sans
+  subsets: ["latin"],
+  display: "swap", // Recommended for better font loading
 });
 
 export const metadata: Metadata = {
@@ -27,7 +35,8 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        // Add the Josefin Sans variable to the body's className
+        className={`${geistSans.variable} ${geistMono.variable} ${josefinSans.variable} antialiased`}
       >
         <ReduxProviderWrapper>
           <Navbar />

@@ -75,7 +75,7 @@ export default function BannerSlider({ banners }: { banners: BannerItem[] }) {
   );
 
   return (
-    <div className="relative w-full h-[250px] sm:h-[200px] md:h-[350px] lg:h-[300px] xl:h-[500px] overflow-hidden">
+    <div className="relative w-full h-[250px] sm:h-[300px] md:h-[400px] lg:h-[450px] xl:h-[520px] overflow-hidden">
       {/* Slider */}
       <div ref={sliderRef} className="keen-slider w-full h-full">
         {banners.map((banner) => (
@@ -83,6 +83,7 @@ export default function BannerSlider({ banners }: { banners: BannerItem[] }) {
             key={banner.id}
             className="keen-slider__slide relative w-full h-full"
           >
+            {/* Background image */}
             <Image
               src={
                 isMobile && banner.mobile_banner
@@ -95,6 +96,25 @@ export default function BannerSlider({ banners }: { banners: BannerItem[] }) {
               className="object-cover object-center"
               sizes="100vw"
             />
+
+            {/* Overlay content */}
+            <div className="absolute inset-0 flex items-center px-4 sm:px-10 md:px-20 z-10">
+              <div className="w-full max-w-[50%] text-black">
+                <h2 className="text-2xl sm:text-3xl md:text-5xl font-semibold leading-tight">
+                  {banner.heading}
+                </h2>
+                <p className="mt-4 text-sm sm:text-base md:text-lg text-gray-700">
+                  {banner.subheading}{" "}
+                  {banner.subheading2 && <span>{banner.subheading2}</span>}
+                </p>
+                <a
+                  href={banner.buttonLink}
+                  className="inline-block mt-6 px-6 py-2 bg-white text-black font-medium shadow hover:bg-gray-100 transition"
+                >
+                  {banner.buttonText}
+                </a>
+              </div>
+            </div>
           </div>
         ))}
       </div>

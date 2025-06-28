@@ -2,8 +2,16 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #1d3b60; /* ✅ Global text color */
-  --font-body: InterRegular, "InterRegular Fallback", sans-serif;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  /* Add Josefin Sans to the theme variables if you plan to use it in Tailwind */
+  --font-josefin-sans: var(--font-josefin-sans);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,11 +23,20 @@
 
 body {
   background: var(--background);
-  color: var(--foreground); /* ✅ Global default text color */
-  font-family: var(--font-body);
+  color: var(--foreground);
+  /* Apply Josefin Sans using its CSS variable, with fallbacks */
+  font-family: var(--font-josefin-sans), Arial, Helvetica, sans-serif;
 }
 
-* {
-  font-family: var(--font-body);
-  color: inherit; /* Ensures all inherit global color */
+/* Navigation arrows of */
+.swiper-button-next,
+.swiper-button-prev {
+  width: 16px !important;
+  height: 16px !important;
+  color: #000 !important;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 12px !important;
 }

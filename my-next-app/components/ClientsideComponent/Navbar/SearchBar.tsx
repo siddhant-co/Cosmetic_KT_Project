@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 
@@ -8,7 +9,6 @@ const SearchBar = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-    // TODO: Route or trigger search logic
     console.log("Searching for:", query);
   };
 
