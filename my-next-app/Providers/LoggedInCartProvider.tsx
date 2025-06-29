@@ -1,13 +1,15 @@
-// providers/LoggedInCartProvider.tsx
+// Providers/LoggedInCartProvider.tsx
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { useAppSelector } from "@/store/hooks/hooks";
 import { selectToken } from "@/store/slices/authSlice";
 import { apiCore } from "@/api/ApiCore";
-import LoggedInCartContext from "./LoggedInCartContext";
+import LoggedInCartContext from "./LoggedInCartContext"; // This import is correct for the Context object
+
 import { CartItem } from "@/types/cart"; // Import CartItem from central location
 
+// Moved parseCartResponse outside the component to avoid re-creation
 const parseCartResponse = (response: any): CartItem[] => {
   console.log(
     "LoggedInCartProvider: Raw response to parse (GET /cart):",
@@ -19,8 +21,6 @@ const parseCartResponse = (response: any): CartItem[] => {
     let rawCartItems: any[] = [];
 
     // **CRITICAL: Adapt this to your backend's EXACT response structure.**
-    // The most common structure is `response.data.cart_items` where each `item` in that array
-    // has a unique `id` (which is your `cartItemId`) and a nested `product` object.
     if (
       response &&
       typeof response === "object" &&
@@ -64,10 +64,10 @@ const parseCartResponse = (response: any): CartItem[] => {
       return [];
     }
 
-    items = rawCartItems.map((item) => {
+    // Fix for: Parameter 'item' implicitly has an 'any' type.ts(7006)
+    items = rawCartItems.map((item: any) => {
+      // <--- Added ': any' here to resolve the error
       // **CRITICAL: Ensure these mappings are correct for your backend's data!**
-      // `item.id` from `rawCartItems` is assumed to be the unique `cartItemId`.
-      // `item.product_id` or `item.product?.id` is assumed to be the `productId`.
       const cartItemId = item.id; // This is the ID of the specific cart entry from backend
       const productId =
         item.product_id || item.product?.id || item.product?.productId; // This is the product's original ID
@@ -182,7 +182,6 @@ export function LoggedInCartProvider({
       setError(null);
       const prevItems = [...items];
 
-      // Optimistic Update: Add or update item with a temporary cartItemId
       setItems((currentItems) => {
         const existingItem = currentItems.find((item) => {
           return (
@@ -194,15 +193,12 @@ export function LoggedInCartProvider({
         });
 
         if (existingItem) {
-          // If item exists, update its quantity. Use existing cartItemId.
           return currentItems.map((item) =>
             item.cartItemId === existingItem.cartItemId
               ? { ...item, quantity: item.quantity + itemToAdd.quantity }
               : item
           );
         } else {
-          // If new item, add it directly with a unique temporary cartItemId.
-          // We use negative timestamp to avoid collision with real IDs from backend.
           const tempCartItemId = Date.now() * -1;
           return [
             ...currentItems,
@@ -221,12 +217,10 @@ export function LoggedInCartProvider({
           "LoggedInCartProvider: Calling API for /cart/add with payload:",
           payload
         );
-        // The /cart/add endpoint should either add or update the quantity
+        // Backend should ideally return the updated cart item or entire cart
         await apiCore("/cart/add", "POST", payload, token);
         console.log("LoggedInCartProvider: /cart/add successful.");
-
-        // *** IMPORTANT: Refetch cart after adding/updating to get the real cartItemId from backend ***
-        await fetchCartItems();
+        await fetchCartItems(); // Re-fetch to get correct cart state from backend
       } catch (err: any) {
         console.error("LoggedInCartProvider: Failed to add cart item:", err);
         setError(err.message || "Failed to add item to cart.");
@@ -238,12 +232,10 @@ export function LoggedInCartProvider({
 
   const removeCartItem = useCallback(
     async (cartItemId: number) => {
-      // Now correctly accepts cartItemId
       if (!token) return;
       setError(null);
       const prevItems = [...items];
 
-      // Optimistic update: remove item from UI
       setItems((currentItems) =>
         currentItems.filter((item) => item.cartItemId !== cartItemId)
       );
@@ -253,7 +245,6 @@ export function LoggedInCartProvider({
           "LoggedInCartProvider: Calling API for /cart/remove/",
           cartItemId
         );
-        // Using cartItemId in the URL as per backend expectation
         await apiCore(`/cart/remove/${cartItemId}`, "DELETE", undefined, token);
         console.log("LoggedInCartProvider: /cart/remove successful.");
       } catch (err: any) {
@@ -267,7 +258,6 @@ export function LoggedInCartProvider({
 
   const incrementItemQuantity = useCallback(
     async (cartItemId: number) => {
-      // Now correctly accepts cartItemId
       if (!token) return;
       setError(null);
       const prevItems = [...items];
@@ -280,7 +270,6 @@ export function LoggedInCartProvider({
 
       const newQuantity = currentItem.quantity + 1;
 
-      // Optimistic update
       setItems((currentItems) =>
         currentItems.map((item) =>
           item.cartItemId === cartItemId
@@ -294,7 +283,6 @@ export function LoggedInCartProvider({
           "LoggedInCartProvider: Calling API for /cart/update with payload:",
           { cartItemId: cartItemId, quantity: newQuantity }
         );
-        // Assuming /cart/update/{cartItemId} with PUT method for quantity updates
         await apiCore(
           `/cart/update/${cartItemId}`,
           "PUT",
@@ -316,7 +304,6 @@ export function LoggedInCartProvider({
 
   const decrementItemQuantity = useCallback(
     async (cartItemId: number) => {
-      // Now correctly accepts cartItemId
       if (!token) return;
       setError(null);
       const prevItems = [...items];
@@ -329,7 +316,6 @@ export function LoggedInCartProvider({
 
       const newQuantity = currentItem.quantity - 1;
 
-      // Optimistic update
       setItems((currentItems) => {
         if (newQuantity <= 0) {
           return currentItems.filter((item) => item.cartItemId !== cartItemId);
@@ -348,7 +334,6 @@ export function LoggedInCartProvider({
             "LoggedInCartProvider: Decrementing to 0 or less, removing item by cartItemId:",
             cartItemId
           );
-          // If quantity goes to 0, remove the item completely
           await apiCore(
             `/cart/remove/${cartItemId}`,
             "DELETE",
@@ -360,7 +345,6 @@ export function LoggedInCartProvider({
             "LoggedInCartProvider: Calling API for /cart/update (decrement) with payload:",
             { cartItemId: cartItemId, quantity: newQuantity }
           );
-          // Update quantity using the update endpoint
           await apiCore(
             `/cart/update/${cartItemId}`,
             "PUT",
@@ -386,7 +370,7 @@ export function LoggedInCartProvider({
     setError(null);
     const prevItems = [...items];
 
-    setItems([]); // Optimistic clear
+    setItems([]);
 
     try {
       console.log("LoggedInCartProvider: Calling API for /cart/clear.");
@@ -408,7 +392,7 @@ export function LoggedInCartProvider({
     incrementItemQuantity,
     decrementItemQuantity,
     clearCart,
-    refetchCart: fetchCartItems,
+    refetchCart: fetchCartItems, // Matches the context type defined in LoggedInCartContext.ts
   };
 
   return (
@@ -417,3 +401,14 @@ export function LoggedInCartProvider({
     </LoggedInCartContext.Provider>
   );
 }
+
+// Hook to consume the context - this is a NAMED export
+export const useLoggedInCart = () => {
+  const context = useContext(LoggedInCartContext);
+  if (context === undefined) {
+    throw new Error(
+      "useLoggedInCart must be used within a LoggedInCartProvider"
+    );
+  }
+  return context;
+};

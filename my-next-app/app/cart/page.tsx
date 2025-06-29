@@ -2,25 +2,26 @@
 "use client";
 
 import React from "react";
-import { useLoggedInCart } from "@/Providers/LoggedInCartContext";
-import { useAppSelector, useAppDispatch } from "@/store/hooks/hooks"; // Import useAppSelector and useAppDispatch
+// FIX: Corrected import path for useLoggedInCart
+import { useLoggedInCart } from "@/Providers/LoggedInCartProvider"; // <--- CHANGED THIS LINE
+import { useAppSelector, useAppDispatch } from "@/store/hooks/hooks";
 import {
   selectCartItems as selectGuestCartItems,
   incrementQuantity,
   decrementQuantity,
   removeFromCart,
   clearCart as clearGuestCart,
-} from "@/store/slices/cartSlice"; // Import guest cart actions
-import { selectIsLoggedIn } from "@/store/slices/authSlice"; // Import selectIsLoggedIn
+} from "@/store/slices/cartSlice";
+import { selectIsLoggedIn } from "@/store/slices/authSlice";
 import { CartItem } from "@/types/cart";
 
 const CartPage = () => {
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const guestCartItems = useAppSelector(selectGuestCartItems);
-  const dispatch = useAppDispatch(); // FIX: Correctly get dispatch using useAppDispatch()
+  const dispatch = useAppDispatch();
 
   const {
-    items: loggedInCartItems, // Rename to avoid conflict
+    items: loggedInCartItems,
     loading: loggedInLoading,
     error: loggedInError,
     incrementItemQuantity: incrementLoggedInItem,
@@ -29,10 +30,9 @@ const CartPage = () => {
     clearCart: clearLoggedInCart,
   } = useLoggedInCart();
 
-  // Determine which cart data and functions to use based on login status
   const items = isLoggedIn ? loggedInCartItems : guestCartItems;
-  const loading = isLoggedIn ? loggedInLoading : false; // Guest cart is not "loading" from API
-  const error = isLoggedIn ? loggedInError : null; // Guest cart has no API errors
+  const loading = isLoggedIn ? loggedInLoading : false;
+  const error = isLoggedIn ? loggedInError : null;
 
   const handleIncrement = (cartItemId: number) => {
     if (isLoggedIn) {
@@ -46,6 +46,7 @@ const CartPage = () => {
     if (isLoggedIn) {
       decrementLoggedInItem(cartItemId);
     } else {
+      // The guest cart logic (cartSlice) already handles removal if quantity <= 0
       dispatch(decrementQuantity(cartItemId));
     }
   };
@@ -66,7 +67,16 @@ const CartPage = () => {
     }
   };
 
-  if (loading) {
+  const subtotal = items.reduce(
+    (total: number, item: CartItem) =>
+      total + item.sellingPrice * item.quantity,
+    0
+  );
+  const shipping = 5;
+  const tax = 0;
+  const total = subtotal + shipping + tax;
+
+  if (loading && items.length === 0) {
     return <div className="text-center py-10">Loading your cart...</div>;
   }
 
@@ -78,7 +88,7 @@ const CartPage = () => {
     );
   }
 
-  if (items.length === 0) {
+  if (items.length === 0 && !loading) {
     return (
       <div className="text-center py-10 text-gray-500">
         Your cart is empty. Start shopping!
@@ -87,74 +97,125 @@ const CartPage = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Your Shopping Cart</h1>
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Shopping Cart</h1>
 
-      <div className="space-y-4">
-        {items.map((item) => (
-          <div
-            key={item.cartItemId} // This key is CRUCIAL for both logged-in and guest!
-            className="flex items-center justify-between border p-4 rounded-lg shadow-sm"
-          >
-            <div className="flex items-center">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-20 h-20 object-cover rounded-md mr-4"
-              />
-              <div>
-                <h3 className="font-semibold text-lg">{item.name}</h3>
-                <p className="text-gray-600">
-                  Price: ₹{item.sellingPrice.toFixed(2)}
-                </p>
-                <p className="text-gray-600">Product ID: {item.id}</p>
-                {/* <p className="text-gray-600">Cart Item ID: {item.cartItemId}</p> // For debugging */}
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Left Column: Cart Items */}
+        <div className="w-full lg:w-2/3">
+          {items.map((item) => (
+            <div
+              key={item.cartItemId}
+              className="bg-white rounded-lg p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between border border-gray-200 shadow-sm mb-4"
+            >
+              <div className="flex items-start sm:items-center w-full sm:w-auto mb-4 sm:mb-0">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-28 h-28 object-cover rounded-md mr-6 flex-shrink-0"
+                />
+                <div className="flex flex-col justify-between h-full">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+                      {item.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-0.5">
+                      Brand: Sephora Collection
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleRemove(item.cartItemId)}
+                    className="text-sm text-red-500 hover:text-red-700 font-medium mt-3 text-left"
+                  >
+                    REMOVE
+                  </button>
+                </div>
+              </div>
+
+              {/* Quantity Selector and Price */}
+              <div className="flex flex-col items-end sm:items-center gap-4 sm:flex-row w-full sm:w-auto justify-between sm:justify-end">
+                <div className="flex items-center space-x-2 border border-gray-300 rounded-md py-1 px-2">
+                  <button
+                    onClick={() => handleDecrement(item.cartItemId)}
+                    className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-sm"
+                    disabled={item.quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <span className="font-medium text-lg w-6 text-center">
+                    {item.quantity}
+                  </span>
+                  <button
+                    onClick={() => handleIncrement(item.cartItemId)}
+                    className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-sm"
+                  >
+                    +
+                  </button>
+                </div>
+                <div className="text-lg font-semibold text-gray-900 w-20 text-right sm:text-left">
+                  {/* UPDATED: Display total price for this item */}$
+                  {(item.sellingPrice * item.quantity).toFixed(2)}
+                </div>
               </div>
             </div>
+          ))}
+        </div>
 
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={() => handleDecrement(item.cartItemId)}
-                className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-                disabled={item.quantity <= 1}
-              >
-                -
-              </button>
-              <span className="font-medium text-lg">{item.quantity}</span>
-              <button
-                onClick={() => handleIncrement(item.cartItemId)}
-                className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-              >
-                +
-              </button>
-              <button
-                onClick={() => handleRemove(item.cartItemId)}
-                className="ml-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-              >
-                Remove
-              </button>
+        {/* Right Column: Order Summary */}
+        <div className="w-full lg:w-1/3 bg-white rounded-lg p-6 shadow-md border border-gray-200 self-start">
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={handleClearCart}
+              className="text-blue-600 hover:text-blue-800 text-sm font-semibold cursor-pointer"
+            >
+              Clear all
+            </button>
+          </div>
+
+          <h2 className="text-xl font-bold text-gray-800 mb-4">
+            Order Summary
+          </h2>
+
+          <div className="space-y-2">
+            <div className="flex justify-between pb-2 border-b border-gray-200">
+              <span className="text-gray-700">Subtotal</span>
+              <span className="font-medium text-gray-900">
+                ${subtotal.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between pb-2 border-b border-gray-200">
+              <span className="text-gray-700">Shipping</span>
+              <span className="font-medium text-gray-900">
+                ${shipping.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between pb-2">
+              <span className="text-gray-700">Tax</span>
+              <span className="font-medium text-gray-900">
+                ${tax.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between pt-4 border-t-2 border-gray-300">
+              <span className="text-xl font-bold text-gray-900">Total</span>
+              <span className="text-xl font-bold text-gray-900">
+                ${total.toFixed(2)}
+              </span>
             </div>
           </div>
-        ))}
-      </div>
 
-      <div className="mt-8 text-right">
-        <p className="text-xl font-bold">
-          Total: ₹
-          {items
-            .reduce(
-              (total: number, item: CartItem) =>
-                total + item.sellingPrice * item.quantity,
-              0
-            )
-            .toFixed(2)}
-        </p>
-        <button
-          onClick={handleClearCart}
-          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-        >
-          Clear Cart
-        </button>
+          <button className="w-full py-3 mt-6 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition-colors">
+            Checkout
+          </button>
+          <button className="w-full py-3 mt-4 bg-gray-200 text-gray-800 font-semibold rounded-md hover:bg-gray-300 transition-colors">
+            Continue Shopping
+          </button>
+
+          <div className="flex justify-center mt-6 space-x-3">
+            <img src="/icons/visa.svg" alt="Visa" className="h-6" />
+            <img src="/icons/mastercard.svg" alt="Mastercard" className="h-6" />
+            <img src="/icons/amex.svg" alt="American Express" className="h-6" />
+          </div>
+        </div>
       </div>
     </div>
   );

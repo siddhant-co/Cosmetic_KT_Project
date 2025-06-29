@@ -1,3 +1,4 @@
+// components/Navbar/NavbarIcons.tsx
 "use client";
 
 import React from "react";
@@ -6,8 +7,10 @@ import { FiHeart, FiShoppingBag } from "react-icons/fi"; // Using FiShoppingBag 
 import { useAppSelector } from "@/store/hooks/hooks";
 import { selectIsLoggedIn } from "@/store/slices/authSlice";
 import { selectCartItems as selectGuestCartItems } from "@/store/slices/cartSlice"; // Alias to avoid confusion
-import { useLoggedInCart } from "@/Providers/LoggedInCartContext"; // Import the logged-in cart context hook
+// FIX: Corrected import path for useLoggedInCart
+import { useLoggedInCart } from "@/Providers/LoggedInCartProvider"; // <--- CHANGED THIS LINE
 import UserAvatar from "@/components/UserAvatar/UserAvatar"; // Assuming this path is correct
+import { CartItem } from "@/types/cart"; // Import CartItem type if not already globally available
 
 const NavbarIcons = () => {
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
@@ -20,8 +23,9 @@ const NavbarIcons = () => {
   const currentCartItems = isLoggedIn ? loggedInCart.items : guestCartItems;
 
   // Calculate total quantity of items in the cart
+  // FIX: Explicitly typed 'total' and 'item' parameters
   const totalCartQuantity = currentCartItems.reduce(
-    (total, item) => total + item.quantity,
+    (total: number, item: CartItem) => total + item.quantity, // <--- ADDED TYPES HERE
     0
   );
 
