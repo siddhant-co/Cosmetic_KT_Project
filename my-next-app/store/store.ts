@@ -1,20 +1,30 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import { combineReducers } from 'redux';
+// store/store.ts
+import { configureStore } from "@reduxjs/toolkit";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist"; // Import all necessary actions
+import storage from "redux-persist/lib/storage";
+import { combineReducers } from "redux";
 
-import authReducer from './slices/authSlice';
-import cartReducer from './slices/cartSlice'; // ✅
+import authReducer from "./slices/authSlice";
+import cartReducer from "./slices/cartSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  cart: cartReducer, // ✅
+  cart: cartReducer,
 });
 
 const persistConfig = {
-  key: 'root',
+  key: "root",
   storage,
-  whitelist: ['auth', 'cart'], // ✅
+  whitelist: ["auth", "cart"], // Ensure 'auth' and 'cart' are whitelisted to persist
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -22,7 +32,12 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }),
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore these Redux Persist actions for serializable check
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
 
 export const persistor = persistStore(store);

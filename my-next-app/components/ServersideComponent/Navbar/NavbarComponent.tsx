@@ -1,8 +1,12 @@
+// components/ServersideComponent/Navbar/Navbar.tsx
+// NO CHANGES ARE NEEDED IN THIS FILE.
+// Its current form is correct for the requirements.
+
 import Image from "next/image";
 import Link from "next/link";
 import NavItems from "@/components/ClientsideComponent/Navbar/NavItems";
 import SearchBar from "@/components/ClientsideComponent/Navbar/SearchBar";
-import NavbarIconsWrapper from "@/components/ClientsideComponent/Navbar/NavbarIconsWrapper";
+import NavbarIconsWrapper from "@/components/ClientsideComponent/Navbar/NavbarIconsWrapper"; // This client component handles cart count and authentication icons
 import MobileMenu from "@/components/ClientsideComponent/Navbar/MobileMenu";
 
 const Navbar = async () => {
@@ -24,6 +28,7 @@ const Navbar = async () => {
           {/* Right: Search + Icons */}
           <div className="flex items-center gap-4">
             <SearchBar />
+            {/* The NavbarIconsWrapper component encapsulates the dynamic cart count and user icon logic */}
             <NavbarIconsWrapper />
           </div>
         </div>
@@ -38,6 +43,7 @@ const Navbar = async () => {
           {/* Right: Search + Icons + Hamburger */}
           <div className="flex items-center gap-4">
             <SearchBar />
+            {/* The NavbarIconsWrapper component encapsulates the dynamic cart count and user icon logic */}
             <NavbarIconsWrapper />
             <MobileMenu />
           </div>
@@ -51,6 +57,7 @@ const Navbar = async () => {
               <Image src="/sitelogo.png" alt="Logo" width={100} height={30} />
             </Link>
             <div className="flex items-center gap-4">
+              {/* The NavbarIconsWrapper component encapsulates the dynamic cart count and user icon logic */}
               <NavbarIconsWrapper />
               <MobileMenu />
             </div>

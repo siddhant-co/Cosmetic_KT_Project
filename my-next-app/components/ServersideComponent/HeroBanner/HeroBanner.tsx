@@ -1,21 +1,23 @@
 import { BannerType } from "@/types/banner";
 import BannerSlider from "@/components/ClientsideComponent/BannerSlider/BannerSlider";
+import { apiCore } from "@/api/ApiCore";
 
-export const getBanners = async (): Promise<BannerType[]> => {
+const getBanners = async (): Promise<BannerType[]> => {
   try {
-    const response = await fetch(
-      "https://ecom-testing.up.railway.app/banners",
-      {
-        cache: "no-store",
-      }
+    const res = await apiCore("/banners", "GET");
+    return Array.isArray(res) ? res : res?.data || [];
+  } catch (err: unknown) {
+    // Changed 'any' to 'unknown'
+    // Safely check if 'err' is an instance of Error before accessing 'message'
+    if (err instanceof Error && err.message.includes("API error 404")) {
+      console.warn("Banner endpoint not found, fallback to empty array");
+      return [];
+    }
+    // If it's an Error, cast it to Error for logging message, otherwise log the whole object
+    console.error(
+      "Banner API error:",
+      err instanceof Error ? err.message : err
     );
-
-    if (!response.ok) throw new Error("Banner fetch failed");
-
-    const banners: BannerType[] = await response.json();
-    return banners;
-  } catch (error) {
-    console.error("Banner API error:", error);
     return [];
   }
 };

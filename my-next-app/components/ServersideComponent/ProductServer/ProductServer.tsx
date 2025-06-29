@@ -1,7 +1,8 @@
 // components/ServersideComponent/ProductServer/ProductServer.tsx
 
 import { fetchProducts } from "@/api/fetchProduct";
-import ProductCard from "@/components/CommonComponents/ProductCard/ProductCard";
+// THIS IS THE CRITICAL LINE TO CHANGE:
+import ProductCard from "@/components/CommonComponents/ProductCard/ProductCard"; // <--- THIS IS THE CORRECT PATH!
 
 const ProductServer = async () => {
   const { products } = await fetchProducts();

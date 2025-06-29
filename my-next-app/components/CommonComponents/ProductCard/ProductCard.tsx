@@ -1,10 +1,14 @@
+// components/ClientsideComponent/ProductCard/ProductCard.tsx
 "use client";
 
 import { useState } from "react";
 import Image from "next/image";
 import CartButton from "@/components/CommonComponents/CartButton/CartButton";
-import { useAppDispatch } from "@/store/hooks/hooks";
-import { addToCart } from "@/store/slices/cartSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
+import { addToCart } from "@/store/slices/cartSlice"; // For guest cart
+import { selectToken } from "@/store/slices/authSlice";
+import { useLoggedInCart } from "@/Providers/LoggedInCartContext";
+import { CartItem } from "@/types/cart"; // Import CartItem from central location
 
 interface ProductImage {
   image: string;
@@ -17,6 +21,7 @@ interface Product {
   sellingPrice: string;
   basePrice: string;
   images: ProductImage[];
+  variantId?: number;
 }
 
 interface Props {
@@ -29,24 +34,51 @@ const ProductCard = ({ product }: Props) => {
 
   const [hovered, setHovered] = useState(false);
   const dispatch = useAppDispatch();
+  const token = useAppSelector(selectToken);
 
-  const handleAddToCart = () => {
-    const item = {
-      id: product.id,
+  const loggedInCart = useLoggedInCart();
+
+  const handleAddToCart = async (product: Product) => {
+    // Construct the item *without* cartItemId, as it's assigned by the backend
+    const itemForAPI: Omit<CartItem, "cartItemId"> = {
+      id: product.id, // This is the productId
       name: product.name,
-      quantity: 1,
-      sellingPrice: +product.sellingPrice,
-      basePrice: +product.basePrice,
-      image: product.images[0]?.image || "",
+      quantity: 1, // Always add one at a time from this button
+      sellingPrice: parseFloat(product.sellingPrice),
+      basePrice: parseFloat(product.basePrice),
+      image: firstImage || "/placeholder.jpg",
+      variantId: product.variantId,
     };
 
-    dispatch(addToCart(item));
+    if (token) {
+      console.log(
+        "ProductCard: Logged-in user initiating add with item data:",
+        itemForAPI
+      );
+      // Pass the item without cartItemId; the provider handles the temporary ID and refetch.
+      await loggedInCart.addCartItem(itemForAPI);
+      console.log(
+        "ProductCard: Logged-in addCartItem call finished and UI optimistically updated."
+      );
+    } else {
+      console.log(
+        "ProductCard: Guest user adding product to Redux cart with item data:",
+        itemForAPI
+      );
+      // For the Redux store (guest cart), if your Redux CartItem type requires `cartItemId`,
+      // you'll need to generate a temporary one here before dispatching.
+      // Example for Redux:
+      const guestCartItem: CartItem = {
+        ...itemForAPI,
+        cartItemId: Date.now() * -1, // Use a temporary, unique negative ID for guest cart
+      };
+      dispatch(addToCart(guestCartItem));
+    }
   };
 
   return (
     <div className="group relative w-full max-w-[250px] mx-auto rounded-lg overflow-hidden shadow-md border border-pink-100 bg-white/70 backdrop-blur-md transition-all duration-300 hover:shadow-lg hover:scale-[1.015]">
       <div className="relative z-10 pb-4">
-        {/* Image Section */}
         <div
           className="bg-[#F3F6F7] px-3 pt-3 pb-2 rounded-t-lg"
           onMouseEnter={() => setHovered(true)}
@@ -69,12 +101,10 @@ const ProductCard = ({ product }: Props) => {
           </div>
         </div>
 
-        {/* Title */}
         <h3 className="mt-2 px-3 text-sm font-semibold text-center text-pink-800 line-clamp-2">
           {product.name}
         </h3>
 
-        {/* Price */}
         <div className="mt-1 flex justify-center gap-2 items-center">
           <span className="text-base font-bold text-pink-600">
             ₹{product.sellingPrice}
@@ -84,9 +114,8 @@ const ProductCard = ({ product }: Props) => {
           </span>
         </div>
 
-        {/* Cart Button */}
         <div className="mt-3 flex justify-center px-3">
-          <CartButton onClick={handleAddToCart} />
+          <CartButton onClick={() => handleAddToCart(product)} />
         </div>
       </div>
     </div>

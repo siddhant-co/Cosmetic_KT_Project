@@ -1,5 +1,5 @@
 // api/getBannerApi.ts
-import { apiCore } from "./ApiCore";
+import { apiCore } from "@/api/ApiCore";
 import { BannerType } from "@/types/banner";
 
 export const getBanners = async (): Promise<BannerType[]> => {

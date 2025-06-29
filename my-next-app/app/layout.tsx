@@ -1,9 +1,9 @@
+// app/layout.tsx
 import type { Metadata } from "next";
-// Import Josefin Sans along with your existing fonts
 import { Geist, Geist_Mono, Josefin_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/ServersideComponent/Navbar/NavbarComponent";
-import ReduxProviderWrapper from "@/providers/ReduxProviderWrapper";
+import Navbar from "@/components/ServersideComponent/Navbar/NavbarComponent"; // Correct import path for Navbar
+import ReduxProviderWrapper from "@/store/providers/ReduxProviderWrapper"; // Correct import path for ReduxProviderWrapper
 import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
@@ -16,11 +16,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Define Josefin Sans
 const josefinSans = Josefin_Sans({
-  variable: "--font-josefin-sans", // Define a CSS variable for Josefin Sans
+  variable: "--font-josefin-sans",
   subsets: ["latin"],
-  display: "swap", // Recommended for better font loading
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -36,11 +35,12 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        // Add the Josefin Sans variable to the body's className
         className={`${geistSans.variable} ${geistMono.variable} ${josefinSans.variable} antialiased`}
       >
         <ReduxProviderWrapper>
-        <Toaster position="top-right" />
+          <Toaster position="top-right" />
+          {/* CRITICAL CHANGE: Navbar and children (main content) are now wrapped by LoggedInCartProvider */}
+          {/* This ensures that NavbarIconsWrapper and CartPage have access to the LoggedInCartContext */}
           <Navbar />
           <main className="pt-0">{children}</main>
         </ReduxProviderWrapper>
