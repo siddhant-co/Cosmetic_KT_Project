@@ -115,7 +115,7 @@ const CartPage = () => {
             >
               <div className="flex items-start sm:items-center w-full sm:w-auto mb-4 sm:mb-0">
                 <img
-                  src={item.image}
+                  src={item.image} // This will display the variant image if it's stored in item.image
                   alt={item.name}
                   className="w-28 h-28 object-cover rounded-md mr-6 flex-shrink-0"
                 />
@@ -127,6 +127,11 @@ const CartPage = () => {
                     <p className="text-sm text-gray-500 mt-0.5">
                       Brand: Sephora Collection
                     </p>
+                    {item.variantId && ( // Display variant ID if available
+                      <p className="text-xs text-gray-400">
+                        Variant ID: {item.variantId}
+                      </p>
+                    )}
                   </div>
                   <button
                     onClick={() => handleRemove(item.cartItemId)}
@@ -143,8 +148,7 @@ const CartPage = () => {
                   <button
                     onClick={() => handleDecrement(item.cartItemId)}
                     className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-sm"
-                    // REMOVED: disabled={item.quantity <= 1}
-                    // This allows clicking decrement when quantity is 1, leading to deletion.
+                    // Removed disabled={item.quantity <= 1} to allow deletion on decrement from 1
                   >
                     -
                   </button>
@@ -159,7 +163,7 @@ const CartPage = () => {
                   </button>
                 </div>
                 <div className="text-lg font-semibold text-gray-900 w-20 text-right sm:text-left">
-                  {/* UPDATED: Display total price for this item */}$
+                  {/* Display total price for this item */}$
                   {(item.sellingPrice * item.quantity).toFixed(2)}
                 </div>
               </div>
