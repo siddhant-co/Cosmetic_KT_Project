@@ -7,8 +7,7 @@ import CartButton from "@/components/CommonComponents/CartButton/CartButton";
 import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
 import { addToCart } from "@/store/slices/cartSlice"; // For guest cart
 import { selectToken } from "@/store/slices/authSlice";
-// FIX: Corrected import path for useLoggedInCart
-import { useLoggedInCart } from "@/Providers/LoggedInCartProvider"; // <--- CHANGED THIS LINE
+import { useLoggedInCart } from "@/Providers/LoggedInCartProvider"; // Corrected import path
 import { CartItem } from "@/types/cart"; // Import CartItem from central location
 
 interface ProductImage {
@@ -68,7 +67,6 @@ const ProductCard = ({ product }: Props) => {
       );
       // For the Redux store (guest cart), if your Redux CartItem type requires `cartItemId`,
       // you'll need to generate a temporary one here before dispatching.
-      // Example for Redux:
       const guestCartItem: CartItem = {
         ...itemForAPI,
         cartItemId: Date.now() * -1, // Use a temporary, unique negative ID for guest cart
@@ -116,6 +114,7 @@ const ProductCard = ({ product }: Props) => {
         </div>
 
         <div className="mt-3 flex justify-center px-3">
+          
           <CartButton onClick={() => handleAddToCart(product)} />
         </div>
       </div>

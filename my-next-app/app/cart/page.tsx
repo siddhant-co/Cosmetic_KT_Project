@@ -2,8 +2,7 @@
 "use client";
 
 import React from "react";
-// FIX: Corrected import path for useLoggedInCart
-import { useLoggedInCart } from "@/Providers/LoggedInCartProvider"; // <--- CHANGED THIS LINE
+import { useLoggedInCart } from "@/Providers/LoggedInCartProvider"; // Corrected import path
 import { useAppSelector, useAppDispatch } from "@/store/hooks/hooks";
 import {
   selectCartItems as selectGuestCartItems,
@@ -44,9 +43,13 @@ const CartPage = () => {
 
   const handleDecrement = (cartItemId: number) => {
     if (isLoggedIn) {
+      // This will call the LoggedInCartProvider's decrement function,
+      // which already handles removing the item if its quantity becomes 0 or less.
       decrementLoggedInItem(cartItemId);
     } else {
-      // The guest cart logic (cartSlice) already handles removal if quantity <= 0
+      // This dispatches to your Redux cartSlice. Your cartSlice's
+      // decrementQuantity reducer is expected to handle removing the item
+      // if its quantity becomes 0 or less.
       dispatch(decrementQuantity(cartItemId));
     }
   };
@@ -68,8 +71,10 @@ const CartPage = () => {
   };
 
   const subtotal = items.reduce(
-    (total: number, item: CartItem) =>
-      total + item.sellingPrice * item.quantity,
+    (
+      total: number,
+      item: CartItem // Explicitly typed 'total' and 'item'
+    ) => total + item.sellingPrice * item.quantity,
     0
   );
   const shipping = 5;
@@ -138,7 +143,8 @@ const CartPage = () => {
                   <button
                     onClick={() => handleDecrement(item.cartItemId)}
                     className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-sm"
-                    disabled={item.quantity <= 1}
+                    // REMOVED: disabled={item.quantity <= 1}
+                    // This allows clicking decrement when quantity is 1, leading to deletion.
                   >
                     -
                   </button>

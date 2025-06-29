@@ -7,10 +7,9 @@ import { FiHeart, FiShoppingBag } from "react-icons/fi"; // Using FiShoppingBag 
 import { useAppSelector } from "@/store/hooks/hooks";
 import { selectIsLoggedIn } from "@/store/slices/authSlice";
 import { selectCartItems as selectGuestCartItems } from "@/store/slices/cartSlice"; // Alias to avoid confusion
-// FIX: Corrected import path for useLoggedInCart
-import { useLoggedInCart } from "@/Providers/LoggedInCartProvider"; // <--- CHANGED THIS LINE
+import { useLoggedInCart } from "@/Providers/LoggedInCartProvider"; // Corrected import path
 import UserAvatar from "@/components/UserAvatar/UserAvatar"; // Assuming this path is correct
-import { CartItem } from "@/types/cart"; // Import CartItem type if not already globally available
+import { CartItem } from "@/types/cart"; // Import CartItem type
 
 const NavbarIcons = () => {
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
@@ -23,9 +22,8 @@ const NavbarIcons = () => {
   const currentCartItems = isLoggedIn ? loggedInCart.items : guestCartItems;
 
   // Calculate total quantity of items in the cart
-  // FIX: Explicitly typed 'total' and 'item' parameters
   const totalCartQuantity = currentCartItems.reduce(
-    (total: number, item: CartItem) => total + item.quantity, // <--- ADDED TYPES HERE
+    (total: number, item: CartItem) => total + item.quantity, // Explicitly typed 'total' and 'item'
     0
   );
 

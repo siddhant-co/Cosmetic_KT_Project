@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import { useAppSelector } from "@/store/hooks/hooks";
 import { selectToken } from "@/store/slices/authSlice";
-import { apiCore } from "@/api/ApiCore";
+import { apiCore } from "@/api/ApiCore"; // Corrected import path and name
 import LoggedInCartContext from "./LoggedInCartContext"; // This import is correct for the Context object
 
 import { CartItem } from "@/types/cart"; // Import CartItem from central location
@@ -90,7 +90,6 @@ const parseCartResponse = (response: any): CartItem[] => {
 
       if (!cartItemId || !productId) {
         console.error("Missing critical ID in cart item from backend:", item);
-        // You might want to filter out malformed items or throw an error
         throw new Error("Backend response missing cartItemId or productId.");
       }
 
