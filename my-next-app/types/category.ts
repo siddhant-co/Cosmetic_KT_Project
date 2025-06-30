@@ -1,4 +1,5 @@
 export interface Category {
+  products: never[];
   id: number;
   sequence_number: number;
   name: string;

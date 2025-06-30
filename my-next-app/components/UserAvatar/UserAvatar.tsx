@@ -62,7 +62,7 @@ export default function UserAvatar() {
         aria-expanded={menuOpen}
         className="flex items-center space-x-2 bg-white px-2 py-1 rounded-full shadow border border-gray-200 hover:shadow-md transition-all"
       >
-        <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 text-white flex items-center justify-center font-bold text-sm uppercase">
+        <div className="w-9 h-9 rounded-full bg-[#e60076] text-white flex items-center justify-center font-bold text-sm uppercase">
           {initials}
         </div>
         <span className="hidden md:inline text-gray-800 font-medium text-sm">

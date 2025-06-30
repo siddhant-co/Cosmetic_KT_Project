@@ -5,6 +5,7 @@ import Image from "next/image";
 import CartButton from "@/components/CommonComponents/CartButton/CartButton";
 import { useAppDispatch } from "@/store/hooks/hooks";
 import { addToCart } from "@/store/slices/cartSlice";
+import Link from "next/link";
 
 interface ProductImage {
   image: string;
@@ -12,6 +13,7 @@ interface ProductImage {
 }
 
 interface Product {
+  slug: any;
   id: number;
   name: string;
   sellingPrice: string;
@@ -44,6 +46,7 @@ const ProductCard = ({ product }: Props) => {
   };
 
   return (
+    <Link href={`/product/${product.slug}`} className="block">
     <div className="group relative w-full max-w-[250px] mx-auto rounded-lg overflow-hidden shadow-md border border-pink-100 bg-white/70 backdrop-blur-md transition-all duration-300 hover:shadow-lg hover:scale-[1.015]">
       <div className="relative z-10 pb-4">
         {/* Image Section */}
@@ -89,7 +92,8 @@ const ProductCard = ({ product }: Props) => {
           <CartButton onClick={handleAddToCart} />
         </div>
       </div>
-    </div>
+      </div>
+      </Link>
   );
 };
 

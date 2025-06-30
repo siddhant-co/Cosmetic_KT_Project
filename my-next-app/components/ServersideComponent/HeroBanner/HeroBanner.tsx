@@ -4,7 +4,7 @@ import BannerSlider from "@/components/ClientsideComponent/BannerSlider/BannerSl
 export const getBanners = async (): Promise<BannerType[]> => {
   try {
     const response = await fetch(
-      "https://ecom-testing.up.railway.app/banners",
+      `${process.env.NEXT_PUBLIC_BASE_URL}/banners`,
       {
         cache: "no-store",
       }

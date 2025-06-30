@@ -11,7 +11,7 @@ export interface GetCategoriesResponse {
 
 export const fetchCategories = async (): Promise<GetCategoriesResponse> => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/category`);
+    const response = await fetch(`https://ecom-ahj1.onrender.com/category`);
     
     if (!response.ok) {
       throw new Error("Failed to fetch categories");

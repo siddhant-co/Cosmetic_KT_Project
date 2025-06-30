@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import Link from "next/link";
 
 interface Category {
   id: number;
@@ -40,6 +41,7 @@ export default function CategorySlider({ categories }: Props) {
       >
         {categories.map((cat, index) => (
           <SwiperSlide key={cat.id}>
+              <Link href={`/category/${cat.id}`} passHref>
             <div className="flex-shrink-0 w-[260px] h-[420px] bg-white rounded-lg group cursor-pointer relative overflow-hidden transition-all duration-300 mx-auto">
               {/* 🔵 Background Bubble */}
               <div
@@ -77,7 +79,8 @@ export default function CategorySlider({ categories }: Props) {
               <h3 className="relative z-10 mt-20 text-center text-base font-semibold text-black">
                 {cat.name}
               </h3>
-            </div>
+              </div>
+              </Link>
           </SwiperSlide>
         ))}
       </Swiper>

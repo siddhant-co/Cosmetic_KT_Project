@@ -65,7 +65,11 @@ export default function ProductTabs({
       <div className="mt-6 text-sm text-gray-700 leading-relaxed space-y-4">
         {activeTab === 'details' && (
           <div>
-            <p>{productDetails}</p>
+            {/* <p>{productDetails}</p> */}
+            <div
+  className="prose max-w-none"
+  dangerouslySetInnerHTML={{ __html: productDetails || '' }}
+/>
 
             <div className="mt-4">
               <h4 className="font-semibold">Key Ingredients</h4>

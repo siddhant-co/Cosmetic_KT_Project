@@ -56,13 +56,25 @@
 
 // app/components/TopCategories.tsx (server component)
 
+// import { fetchTopCategories } from '@/api/fetchTopCategories';
+// import TopCategoriesClient from './TopCategoriesClient';
+
+// export default async function TopCategories() {
+//   const categories = await fetchTopCategories();
+
+//   return (
+//     <TopCategoriesClient categories={categories} />
+//   );
+// }
+
+
+
+// TopCategories.tsx
 import { fetchTopCategories } from '@/api/fetchTopCategories';
 import TopCategoriesClient from './TopCategoriesClient';
 
 export default async function TopCategories() {
   const categories = await fetchTopCategories();
 
-  return (
-    <TopCategoriesClient categories={categories} />
-  );
+  return <TopCategoriesClient categories={categories} />;
 }
