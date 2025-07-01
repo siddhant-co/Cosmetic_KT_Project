@@ -4,22 +4,22 @@ import Footer from "@/components/ServersideComponent/Footer/Footer";
 import HeroBanner from "@/components/ServersideComponent/HeroBanner/HeroBanner";
 import WhyChooseUs from "@/components/ServersideComponent/WhyChooseUs/WhyChooseUs";
 import TestimonialsSection from "@/components/TestimonialsSection/TestimonialsSection";
-import TopCategories from "@/components/TopCategories/TopCategories";
-import { fetchProducts } from "@/api/fetchProduct";
+import TopCategories from "@/components/ServersideComponent/TopCategories/TopCategories";
 import ProductServer from "@/components/ServersideComponent/ProductServer/ProductServer";
 
 import FeaturedSliderComponent from "@/components/ServersideComponent/FeaturedSliderComponent/FeaturedSliderComponent";
 import GalleryPage from "@/components/ServersideComponent/GalleryPage/GalleryPage";
+import HotListWrapper from "@/components/HotList/HotListWrapper";
 
 
 export default async function HomePage() {
-  const { products } = await fetchProducts();
 
   return (
     <div>
       <HeroBanner />
       <CategorySection />
       <TopCategories />
+      <HotListWrapper></HotListWrapper>
       <ProductServer />
       <WhyChooseUs /> 
       <FeaturedSliderComponent />

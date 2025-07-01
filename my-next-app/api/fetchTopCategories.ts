@@ -1,31 +1,36 @@
-// lib/api.ts or directly in your server component file
-
 // import { Category } from "@/types/category";
-
+// import { apiCore } from "./ApiCore";
 // export async function fetchTopCategories(): Promise<Category[]> {
 //   try {
-//     const res = await fetch(`https://ecom-ahj1.onrender.com/category`, {
-//       cache: 'no-store',
-//     });
-
-//     if (!res.ok) {
-//       throw new Error('Failed to fetch categories');
-//     }
-
-//     const data = await res.json();
-//     return data.categories.sort((a: { sequence_number: number; }, b: { sequence_number: number; }) => a.sequence_number - b.sequence_number);
-//   } catch (err) {
-//     console.error('Error fetching categories:', err);
+//     const res = await apiCore<{ categories: Category[] }>("/category", "GET");
+//     return res.categories ?? [];
+//   } catch (error) {
+//     console.error("[fetchTopCategories] Error:", error);
 //     return [];
 //   }
 // }
 
 
 
-// @/api/fetchTopCategories.ts
-export async function fetchTopCategories() {
-  const res = await fetch('https://ecom-ahj1.onrender.com/category');
-  const json = await res.json();
+import { Category } from "@/types/category";
 
-  return json.categories || [];
+export async function fetchTopCategories(): Promise<Category[]> {
+  try {
+    const response = await fetch("https://cosmaticadmin.twilightparadox.com/category", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: { categories: Category[] } = await response.json();
+    return data.categories ?? [];
+  } catch (error) {
+    console.error("[fetchTopCategories] Error:", error);
+    return [];
+  }
 }

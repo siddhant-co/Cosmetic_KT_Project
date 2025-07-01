@@ -1,7 +1,7 @@
 import { getProducts } from '@/api/fetchFeaturedSlider';
 import React from 'react'
 import FeaturedSlider from "@/components/ClientsideComponent/FeaturedSlider/FeaturedSlider";
-import SectionHeader from '@/components/common/SectionHeader';
+import SectionHeader from '@/components/CommonComponents/SectionHeader';
 
 export default async function FeaturedSliderComponent() {
   

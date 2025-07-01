@@ -1,64 +1,3 @@
-// 'use client';
-
-// import { Range, getTrackBackground } from 'react-range';
-
-// type Props = {
-//   min: number;
-//   max: number;
-//   values: number[];
-//   onChange: (values: number[]) => void;
-// };
-
-// const PriceRangeSlider = ({ min, max, values, onChange }: Props) => {
-//   return (
-//     <div className="bg-white border-gray-300 rounded-md border p-4 shadow-sm">
-//       <h3 className="text-sm font-semibold text-gray-700 mb-4">Price Range</h3>
-
-//       <div className="flex justify-between text-sm font-medium text-gray-600 mb-2">
-//         <span>₹{values[0]}</span>
-//         <span>₹{values[1]}</span>
-//       </div>
-
-//       <Range
-//         values={values}
-//         step={10}
-//         min={min}
-//         max={max}
-//         onChange={onChange}
-//         renderTrack={({ props, children }) => (
-//           <div
-//             {...props}
-//             className="w-full h-[6px] rounded bg-gray-200"
-//             style={{
-//               ...props.style,
-//               background: getTrackBackground({
-//                 values,
-//                 colors: ['#ccc', '#f97316', '#ccc'],
-//                 min,
-//                 max,
-//               }),
-//             }}
-//           >
-//             {children}
-//           </div>
-//         )}
-//         renderThumb={({ props }) => {
-//           const { key, ...rest } = props;
-//           return (
-//             <div
-//               key={key}
-//               {...rest}
-//               className="h-4 w-4 rounded-full bg-orange-500 border-2 border-white shadow"
-//             />
-//           );
-//         }}
-//       />
-//     </div>
-//   );
-// };
-
-// export default PriceRangeSlider;
-
 "use client";
 
 import { Range, getTrackBackground } from "react-range";
@@ -90,14 +29,19 @@ const PriceRangeSlider = ({ min, max, values, onChange }: Props) => {
           <div
             {...props}
             className="w-full h-[6px] rounded bg-gray-200"
+            // style={{
+            //   ...props.style,
+            //   background: getTrackBackground({
+            //     values,
+            //     colors: ["#ccc", "#f97316", "#ccc"],
+            //     min,
+            //     max,
+            //   }),
+            // }}
+
             style={{
               ...props.style,
-              background: getTrackBackground({
-                values,
-                colors: ["#ccc", "#f97316", "#ccc"],
-                min,
-                max,
-              }),
+              background: `linear-gradient(to right, #e0d4f7 ${((values[0] - min) / (max - min)) * 100}%, #966ad7 ${((values[0] - min) / (max - min)) * 100}% ${((values[1] - min) / (max - min)) * 100}%, #e0d4f7 ${((values[1] - min) / (max - min)) * 100}%)`,
             }}
           >
             {children}
@@ -109,7 +53,7 @@ const PriceRangeSlider = ({ min, max, values, onChange }: Props) => {
             <div
               key={key}
               {...rest}
-              className="h-4 w-4 rounded-full bg-orange-500 border-2 border-white shadow"
+              className="h-4 w-4 rounded-full bg-[#966ad7] border-2 border-white shadow"
             />
           );
         }}

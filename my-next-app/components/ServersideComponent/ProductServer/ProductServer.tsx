@@ -1,6 +1,7 @@
 // components/ServersideComponent/ProductServer/ProductServer.tsx
 
 import { fetchProducts } from "@/api/fetchProduct";
+// THIS IS THE CRITICAL LINE TO CHANGE:
 import ProductCard from "@/components/CommonComponents/ProductCard/ProductCard";
 
 const ProductServer = async () => {

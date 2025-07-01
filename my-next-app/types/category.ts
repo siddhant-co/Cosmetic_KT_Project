@@ -1,5 +1,8 @@
+import { Product } from "./product";
+
 export interface Category {
-  products: never[];
+  description: string;
+  products: Product[];
   id: number;
   sequence_number: number;
   name: string;
@@ -8,5 +11,4 @@ export interface Category {
   banner: string;
   imageUrl: string;
   publicId: string;
-  subcategories: any[]; 
 }

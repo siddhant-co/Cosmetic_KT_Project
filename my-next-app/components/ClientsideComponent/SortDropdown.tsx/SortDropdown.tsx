@@ -12,7 +12,7 @@ export default function SortDropdown({ sortOrder, setSortOrder }: SortDropdownPr
     <select
       value={sortOrder}
       onChange={(e) => setSortOrder(e.target.value as SortOrder)}
-      className="border rounded px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+      className="border rounded px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-0.5 focus:ring-black"
     >
           <option value="price_asc">Price: Low to High</option>
       <option value="price_desc">Price: High to Low</option>

@@ -19,15 +19,20 @@ export default function SidebarFiltersClient({
   onPriceChange,
 }: Props) {
   return (
-    <aside className="lg:w-1/5 w-full sticky top-20 space-y-6">
+
+    <div className='lg:w-1/5 w-full' >
+  
+    <aside className=" sticky top-20 space-y-6">
+
+
       <div className="bg-white border border-gray-300 shadow p-5 rounded">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Categories</h2>
         <div className="space-y-2">
           <button
             onClick={() => onCategoryChange('all')}
-            className={`block w-full text-left text-sm font-medium rounded px-4 py-2 transition ${
+            className={`block w-full text-left text-sm font-medium rounded px-4 py-2 transition cursor-pointer ${
               selectedCategory === 'all'
-                ? 'bg-orange-100 text-orange-600'
+                ? 'bg-[#b0c9e8] text-neutral-900'
                 : 'hover:bg-gray-100 text-gray-800'
             }`}
           >
@@ -37,9 +42,9 @@ export default function SidebarFiltersClient({
             <button
               key={cat.id}
               onClick={() => onCategoryChange(String(cat.id))}
-              className={`block w-full text-left text-sm font-medium rounded px-4 py-2 transition ${
+              className={`block w-full text-left text-sm font-medium rounded px-4 py-2 transition cursor-pointer ${
                 selectedCategory === String(cat.id)
-                  ? 'bg-orange-100 text-orange-600'
+                  ? 'bg-[#b0c9e8] text-neutral-900'
                   : 'hover:bg-gray-100 text-gray-800'
               }`}
             >
@@ -50,12 +55,13 @@ export default function SidebarFiltersClient({
       </div>
 
       <PriceRangeSlider
-        min={79}
-        max={399}
+        min={10}
+        max={3999}
         values={priceRange}
         onChange={onPriceChange}
       />
-    </aside>
+      </aside>
+      </div>
   );
 }
 

@@ -1,134 +1,234 @@
 // app/cart/page.tsx
 "use client";
 
+import React from "react";
+import { useLoggedInCart } from "@/Providers/LoggedInCartProvider"; // Corrected import path
+import { useAppSelector, useAppDispatch } from "@/store/hooks/hooks";
 import Image from "next/image";
-import { FiTrash2 } from "react-icons/fi";
-import { useAppDispatch, useAppSelector } from "@/store/hooks/hooks";
 import {
-  selectCartItems,
-  removeFromCart,
+  selectCartItems as selectGuestCartItems,
   incrementQuantity,
   decrementQuantity,
-  clearCart,
+  removeFromCart,
+  clearCart as clearGuestCart,
 } from "@/store/slices/cartSlice";
+import { selectIsLoggedIn } from "@/store/slices/authSlice";
+import { CartItem } from "@/types/cart";
 
 const CartPage = () => {
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const guestCartItems = useAppSelector(selectGuestCartItems);
   const dispatch = useAppDispatch();
-  const cartItems = useAppSelector(selectCartItems);
-  const shippingCost = 5;
-  const tax = 0;
 
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.sellingPrice * item.quantity,
+  const {
+    items: loggedInCartItems,
+    loading: loggedInLoading,
+    error: loggedInError,
+    incrementItemQuantity: incrementLoggedInItem,
+    decrementItemQuantity: decrementLoggedInItem,
+    removeCartItem: removeLoggedInItem,
+    clearCart: clearLoggedInCart,
+  } = useLoggedInCart();
+
+  const items = isLoggedIn ? loggedInCartItems : guestCartItems;
+  const loading = isLoggedIn ? loggedInLoading : false;
+  const error = isLoggedIn ? loggedInError : null;
+
+  const handleIncrement = (cartItemId: number) => {
+    if (isLoggedIn) {
+      incrementLoggedInItem(cartItemId);
+    } else {
+      dispatch(incrementQuantity(cartItemId));
+    }
+  };
+
+  const handleDecrement = (cartItemId: number) => {
+    if (isLoggedIn) {
+      // This will call the LoggedInCartProvider's decrement function,
+      // which already handles removing the item if its quantity becomes 0 or less.
+      decrementLoggedInItem(cartItemId);
+    } else {
+      // This dispatches to your Redux cartSlice. Your cartSlice's
+      // decrementQuantity reducer is expected to handle removing the item
+      // if its quantity becomes 0 or less.
+      dispatch(decrementQuantity(cartItemId));
+    }
+  };
+
+  const handleRemove = (cartItemId: number) => {
+    if (isLoggedIn) {
+      removeLoggedInItem(cartItemId);
+    } else {
+      dispatch(removeFromCart(cartItemId));
+    }
+  };
+
+  const handleClearCart = () => {
+    if (isLoggedIn) {
+      clearLoggedInCart();
+    } else {
+      dispatch(clearGuestCart());
+    }
+  };
+
+  const subtotal = items.reduce(
+    (
+      total: number,
+      item: CartItem // Explicitly typed 'total' and 'item'
+    ) => total + item.sellingPrice * item.quantity,
     0
   );
-  const total = subtotal + shippingCost + tax;
+  const shipping = 5;
+  const tax = 0;
+  const total = subtotal + shipping + tax;
+
+  if (loading && items.length === 0) {
+    return <div className="text-center py-10">Loading your cart...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-10 text-red-600">
+        Error loading cart: {error}
+      </div>
+    );
+  }
+
+  if (items.length === 0 && !loading) {
+    return (
+      <div className="text-center py-10 text-gray-500">
+        Your cart is empty. Start shopping!
+      </div>
+    );
+  }
 
   return (
-    <section className="px-4 py-10 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Shopping Cart</h1>
 
-      <div className="flex flex-col lg:flex-row gap-10">
-        {/* Left: Cart Items */}
-        <div className="flex-1">
-          {cartItems.map((item) => (
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Left Column: Cart Items */}
+        <div className="w-full lg:w-2/3">
+          {items.map((item) => (
             <div
-              key={item.id}
-              className="flex items-start justify-between mb-6"
+              key={item.cartItemId}
+              className="bg-white rounded-lg p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between border border-gray-200 shadow-sm mb-4"
             >
-              <div className="flex gap-4">
+              <div className="flex items-start sm:items-center w-full sm:w-auto mb-4 sm:mb-0">
                 <Image
-                  src={item.image}
+                  src={item.image} // This will display the variant image if it's stored in item.image
                   alt={item.name}
-                  width={100}
-                  height={100}
-                  className="rounded-lg"
+                  className="w-28 h-28 object-cover rounded-md mr-6 flex-shrink-0"
                 />
-                <div>
-                  <h2 className="font-semibold text-lg">{item.name}</h2>
+                <div className="flex flex-col justify-between h-full">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+                      {item.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-0.5">
+                      Brand: Sephora Collection
+                    </p>
+                    {item.variantId && ( // Display variant ID if available
+                      <p className="text-xs text-gray-400">
+                        Variant ID: {item.variantId}
+                      </p>
+                    )}
+                  </div>
                   <button
-                    onClick={() => dispatch(removeFromCart(item.id))}
-                    className="flex items-center text-red-600 mt-2 text-xs hover:underline"
+                    onClick={() => handleRemove(item.cartItemId)}
+                    className="text-sm text-red-500 hover:text-red-700 font-medium mt-3 text-left"
                   >
-                    <FiTrash2 className="mr-1 text-red-600" /> REMOVE
+                    REMOVE
                   </button>
                 </div>
               </div>
 
-              <div className="text-right">
-                <button
-                  onClick={() => dispatch(clearCart())}
-                  className="text-blue-600 text-sm font-medium mb-2 hover:underline"
-                >
-                  Clear all
-                </button>
-                <p className="font-semibold text-xl">
-                  ₹{item.sellingPrice * item.quantity}
-                </p>
-                <div className="mt-2 flex items-center border rounded overflow-hidden w-fit">
+              {/* Quantity Selector and Price */}
+              <div className="flex flex-col items-end sm:items-center gap-4 sm:flex-row w-full sm:w-auto justify-between sm:justify-end">
+                <div className="flex items-center space-x-2 border border-gray-300 rounded-md py-1 px-2">
                   <button
-                    onClick={() => dispatch(decrementQuantity(item.id))}
-                    className="px-2 py-1 border-r"
+                    onClick={() => handleDecrement(item.cartItemId)}
+                    className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-sm"
+                    // Removed disabled={item.quantity <= 1} to allow deletion on decrement from 1
                   >
-                    −
+                    -
                   </button>
-                  <span className="px-3">{item.quantity}</span>
+                  <span className="font-medium text-lg w-6 text-center">
+                    {item.quantity}
+                  </span>
                   <button
-                    onClick={() => dispatch(incrementQuantity(item.id))}
-                    className="px-2 py-1 border-l"
+                    onClick={() => handleIncrement(item.cartItemId)}
+                    className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-sm"
                   >
                     +
                   </button>
+                </div>
+                <div className="text-lg font-semibold text-gray-900 w-20 text-right sm:text-left">
+                  {/* Display total price for this item */}$
+                  {(item.sellingPrice * item.quantity).toFixed(2)}
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Right: Order Summary */}
-        <div className="w-full lg:w-[350px] bg-gray-100 p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
-          <div className="flex justify-between text-sm mb-2">
-            <span>Subtotal</span>
-            <span className="font-semibold">₹{subtotal.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-sm mb-2">
-            <span>Shipping</span>
-            <span className="font-semibold">₹{shippingCost}</span>
-          </div>
-          <div className="flex justify-between text-sm mb-4">
-            <span>Tax</span>
-            <span className="font-semibold">₹{tax}</span>
+        {/* Right Column: Order Summary */}
+        <div className="w-full lg:w-1/3 bg-white rounded-lg p-6 shadow-md border border-gray-200 self-start">
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={handleClearCart}
+              className="text-blue-600 hover:text-blue-800 text-sm font-semibold cursor-pointer"
+            >
+              Clear all
+            </button>
           </div>
 
-          <hr className="my-2" />
+          <h2 className="text-xl font-bold text-gray-800 mb-4">
+            Order Summary
+          </h2>
 
-          <div className="flex justify-between text-base font-semibold mb-4">
-            <span>Total</span>
-            <span>₹{total}</span>
+          <div className="space-y-2">
+            <div className="flex justify-between pb-2 border-b border-gray-200">
+              <span className="text-gray-700">Subtotal</span>
+              <span className="font-medium text-gray-900">
+                ${subtotal.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between pb-2 border-b border-gray-200">
+              <span className="text-gray-700">Shipping</span>
+              <span className="font-medium text-gray-900">
+                ${shipping.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between pb-2">
+              <span className="text-gray-700">Tax</span>
+              <span className="font-medium text-gray-900">
+                ${tax.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between pt-4 border-t-2 border-gray-300">
+              <span className="text-xl font-bold text-gray-900">Total</span>
+              <span className="text-xl font-bold text-gray-900">
+                ${total.toFixed(2)}
+              </span>
+            </div>
           </div>
 
-          <button className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition">
+          <button className="w-full py-3 mt-6 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition-colors">
             Checkout
           </button>
-
-          <button className="w-full mt-3 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-sm">
+          <button className="w-full py-3 mt-4 bg-gray-200 text-gray-800 font-semibold rounded-md hover:bg-gray-300 transition-colors">
             Continue Shopping
           </button>
 
-          <div className="flex justify-center mt-5 gap-2">
-            <Image src="/visa.png" alt="Visa" width={40} height={24} />
-            <Image src="/amex.png" alt="Amex" width={40} height={24} />
-            <Image
-              src="/mastercard.png"
-              alt="Mastercard"
-              width={40}
-              height={24}
-            />
+          <div className="flex justify-center mt-6 space-x-3">
+            <Image src="/icons/visa.svg" alt="Visa" className="h-6" />
+            <Image src="/icons/mastercard.svg" alt="Mastercard" className="h-6" />
+            <Image src="/icons/amex.svg" alt="American Express" className="h-6" />
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

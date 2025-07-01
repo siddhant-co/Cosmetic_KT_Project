@@ -28,7 +28,7 @@ export default function ProductTabs({
 
 
       {/* Tabs */}
-      <div className="flex gap-6 border-b text-sm font-medium">
+      <div className="flex gap-6 border-b text-sm font-medium ">
         <button
           className={`pb-2 ${
             activeTab === 'details'
@@ -110,11 +110,11 @@ export default function ProductTabs({
           <div className="space-y-2">
             <div>
               <h4 className="font-semibold">Shipping Information</h4>
-              <p>{shippingInfo}</p>
+              <p dangerouslySetInnerHTML={{ __html: shippingInfo }} />
             </div>
             <div>
               <h4 className="font-semibold">Return Policy</h4>
-              <p>{returnPolicy}</p>
+              <p dangerouslySetInnerHTML={{ __html: returnPolicy }} />
             </div>
           </div>
         )}

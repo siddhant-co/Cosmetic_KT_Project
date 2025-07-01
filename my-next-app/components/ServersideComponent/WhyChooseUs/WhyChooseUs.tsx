@@ -1,5 +1,5 @@
 import { getWhyChooseUs } from "@/api/fetchWhyChooseUs";
-import SectionHeader from "@/components/common/SectionHeader";
+import SectionHeader from "@/components/CommonComponents/SectionHeader";
 
 
 export default async function WhyChooseUs () {

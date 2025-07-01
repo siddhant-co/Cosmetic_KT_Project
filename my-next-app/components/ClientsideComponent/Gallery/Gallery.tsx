@@ -1,18 +1,13 @@
 'use client';
 
-type GalleryImage = {
-  id: number;
-  image: string;
-  sequence_number: string;
-};
+import Image from "next/image";
+import { GalleryImage } from "@/types/gallery";
 
 const Gallery = ({ images }: { images: GalleryImage[] }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-4 h-[500px]">
       {images.map((img, index) => {
-        // Apply special spans to selected items for visual variety
         const isLarge = index === 0 || index === 3;
-
         return (
           <div
             key={img.id}
@@ -20,10 +15,11 @@ const Gallery = ({ images }: { images: GalleryImage[] }) => {
               isLarge ? 'md:col-span-2 md:row-span-2' : ''
             }`}
           >
-            <img
+            <Image
               src={img.image}
               alt={`Gallery ${img.id}`}
               className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+              fill
             />
           </div>
         );

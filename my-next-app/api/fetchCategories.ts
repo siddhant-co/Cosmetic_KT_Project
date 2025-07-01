@@ -1,26 +1,19 @@
-
-
 import { Category } from "@/types/category";
+import { apiCore } from "./ApiCore";
+import { Product } from "@/types/product";
 
 export interface GetCategoriesResponse {
+  products: Product[];
   success: boolean;
   categories: Category[];
 }
 
-
-
 export const fetchCategories = async (): Promise<GetCategoriesResponse> => {
   try {
-    const response = await fetch(`https://ecom-ahj1.onrender.com/category`);
-    
-    if (!response.ok) {
-      throw new Error("Failed to fetch categories");
-    }
-
-    const data = await response.json();
+    const data = await apiCore("/category", "GET");
     return data as GetCategoriesResponse;
   } catch (error) {
-    console.error("Error fetching categories:", error);
+    console.error("Error fetching categories:", (error as Error).message);
     throw error;
   }
 };

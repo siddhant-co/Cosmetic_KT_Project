@@ -1,16 +1,18 @@
-// lib/getProducts.ts
-export async function getProducts(limit: number = 5) {
+import { Product } from "@/types/product";
+import { apiCore } from "./ApiCore";
+
+interface GetProductsResponse {
+  success: boolean;
+  count: number;
+  products: Product[];
+}
+
+export async function getProducts(limit: number = 5): Promise<Product[]> {
   try {
-    const res = await fetch('https://ecom-ahj1.onrender.com/product', {
-      cache: 'no-store',
-    });
-
-    if (!res.ok) throw new Error('Failed to fetch products');
-
-    const data = await res.json();
+    const data = await apiCore<GetProductsResponse>("/product", "GET");
     return data.products?.slice(0, limit) || [];
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error("Error fetching products:", (error as Error).message);
     return [];
   }
 }

@@ -1,4 +1,3 @@
-// ServerSide/fetchProducts.ts
 import { apiCore } from "@/api/ApiCore";
 import { Product } from "@/types/product";
 

@@ -1,11 +1,18 @@
-// app/components/HotListWrapper.tsx or wherever you're placing it
-// import { fetchProducts } from "@/api/ProductCardApi";
+
+// import { fetchProducts } from "@/api/fetchProduct";
 // import HotListClient from "./HotListClient";
+import SectionHeader from "../CommonComponents/SectionHeader";
 
-// const HotListWrapper = async () => {
-//   // const products = await fetchProducts(1, 8);
+const HotListWrapper = async () => {
+  // const res = await fetchProducts();
+  // const product = res.data;
 
-//   return <HotListClient/>;
-// };
+  return (
+    <div>
+      <SectionHeader title={"Hot List"}/>
+      {/* <HotListClient products={product} /> */}
+    </div>
+  );
+};
 
-// export default HotListWrapper;
+export default HotListWrapper;

@@ -1,10 +1,11 @@
-import { AuthCustomer, User } from '@/types/auth';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
+// store/slices/authSlice.ts
+import { AuthCustomer, User } from "@/types/auth";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 interface AuthState {
   user?: User;
-  items?: string[]; // Or whatever the correct type is for items
+  items?: string[];
   customer: AuthCustomer | null;
   token: string | null;
 
@@ -26,7 +27,7 @@ const initialState: AuthState = {
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     loginSuccess(state, action: PayloadAction<{ customer: AuthCustomer; token: string }>) {
@@ -100,5 +101,8 @@ export const {
   resetPasswordFailure,
   resetPasswordFlowReset,
 } = authSlice.actions;
+
+export const selectToken = (state: RootState) => state.auth.token;
+export const selectIsLoggedIn = (state: RootState) => state.auth.token !== null;
 
 export default authSlice.reducer;

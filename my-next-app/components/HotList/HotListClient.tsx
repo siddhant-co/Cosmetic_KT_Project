@@ -1,103 +1,103 @@
-// "use client";
+"use client";
 
-// import { useKeenSlider, KeenSliderPlugin } from "keen-slider/react";
-// import "keen-slider/keen-slider.min.css";
-// import ProductCard from "../ProductCard/ProductCard";
-// import { Products } from "@/api/testProductCardApi"; // ✅ Updated type import
-// import { CircleChevronLeft, CircleChevronRight } from "lucide-react";
-// import TestProductCard from "../ProductCard/TestProductCard";
+import { useKeenSlider, KeenSliderPlugin } from "keen-slider/react";
+import "keen-slider/keen-slider.min.css";
 
-// // KeenSlider Animation Plugin
-// const animation: KeenSliderPlugin = (slider) => {
-//   let timeout: ReturnType<typeof setTimeout> | undefined;
+import { CircleChevronLeft, CircleChevronRight } from "lucide-react";
+import { Product } from "@/types/product";
+import ProductCard from "../CommonComponents/ProductCard/ProductCard";
 
-//   const clearNextTimeout = () => clearTimeout(timeout);
+// KeenSlider Animation Plugin
+const animation: KeenSliderPlugin = (slider) => {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
 
-//   slider.on("created", () => {
-//     slider.container.addEventListener("mouseover", clearNextTimeout);
-//     slider.container.addEventListener("mouseout", clearNextTimeout);
-//   });
+  const clearNextTimeout = () => clearTimeout(timeout);
 
-//   slider.on("animationStarted", clearNextTimeout);
-// };
+  slider.on("created", () => {
+    slider.container.addEventListener("mouseover", clearNextTimeout);
+    slider.container.addEventListener("mouseout", clearNextTimeout);
+  });
 
-// interface HotListClientProps {
-//   products: Products[]; // ✅ Updated type here too
-// }
+  slider.on("animationStarted", clearNextTimeout);
+};
 
-// const HotListClient = ({ products }: HotListClientProps) => {
-//   const [sliderRef, slider] = useKeenSlider<HTMLDivElement>(
-//     {
-//       slides: {
-//         perView: 4,
-//         spacing: 16,
-//       },
-//       breakpoints: {
-//         "(max-width: 1024px)": {
-//           slides: { perView: 2.2, spacing: 14 },
-//         },
-//         "(max-width: 768px)": {
-//           slides: { perView: 1.2, spacing: 12 },
-//         },
-//       },
-//       renderMode: "performance",
-//       defaultAnimation: {
-//         duration: 200,
-//         easing: (t) => t,
-//       },
-//     },
-//     [animation]
-//   );
+interface HotListClientProps {
+  products: Product[]; // ✅ Updated type here too
+}
 
-//   const handlePrev = () => {
-//     if (!slider.current) return;
-//     const currentIdx = slider.current.track.details.rel;
-//     slider.current.moveToIdx(currentIdx - 1);
-//   };
+const HotListClient = ({ products }: HotListClientProps) => {
+  const [sliderRef, slider] = useKeenSlider<HTMLDivElement>(
+    {
+      slides: {
+        perView: 4,
+        spacing: 16,
+      },
+      breakpoints: {
+        "(max-width: 1024px)": {
+          slides: { perView: 2.2, spacing: 14 },
+        },
+        "(max-width: 768px)": {
+          slides: { perView: 1.2, spacing: 12 },
+        },
+      },
+      renderMode: "performance",
+      defaultAnimation: {
+        duration: 200,
+        easing: (t) => t,
+      },
+    },
+    [animation]
+  );
 
-//   const handleNext = () => {
-//     if (!slider.current) return;
-//     const currentIdx = slider.current.track.details.rel;
-//     slider.current.moveToIdx(currentIdx + 1);
-//   };
+  const handlePrev = () => {
+    if (!slider.current) return;
+    const currentIdx = slider.current.track.details.rel;
+    slider.current.moveToIdx(currentIdx - 1);
+  };
 
-//   return (
-//     <section className="my-4 px-4 sm:px-10">
-//       <h2 className="text-xl font-bold mb-2">Hot List</h2>
-//       <p className="text-sm text-gray-500 mb-4">
-//         Check out the most popular and trending products right now.
-//       </p>
+  const handleNext = () => {
+    if (!slider.current) return;
+    const currentIdx = slider.current.track.details.rel;
+    slider.current.moveToIdx(currentIdx + 1);
+  };
 
-//       <div className="relative">
-//         {/* Arrows */}
-//         <button
-//           onClick={handlePrev}
-//           className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 shadow p-2 rounded-full bg-white hover:bg-gray-100"
-//         >
-//           <CircleChevronLeft size={30} />
-//         </button>
-//         <button
-//           onClick={handleNext}
-//           className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 shadow p-2 rounded-full bg-white hover:bg-gray-100"
-//         >
-//           <CircleChevronRight size={30} />
-//         </button>
+  return (
+    <section className="my-4 px-4 sm:px-10">
+      <h2 className="text-xl font-bold mb-2">Hot List</h2>
+      <p className="text-sm text-gray-500 mb-4">
+        Check out the most popular and trending products right now.
+      </p>
 
-//         {/* Slider */}
-//         <div ref={sliderRef} className="keen-slider">
-//           {products.map((product) => (
-//             <div key={product.id} className="keen-slider__slide">
-//               {/* <ProductCard product={product} /> */}
-//               <TestProductCard></TestProductCard>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
+      <div className="relative">
+        {/* Arrows */}
+        <button
+          onClick={handlePrev}
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 shadow p-2 rounded-full bg-white hover:bg-gray-100"
+        >
+          <CircleChevronLeft size={30} />
+        </button>
+        <button
+          onClick={handleNext}
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 shadow p-2 rounded-full bg-white hover:bg-gray-100"
+        >
+          <CircleChevronRight size={30} />
+        </button>
 
-// export default HotListClient;
+        {/* Slider */}
+        <div ref={sliderRef} className="keen-slider">
+          {products.map((product) => (
+            <div key={product.id} className="keen-slider__slide">
+              <ProductCard product={product} />
+              
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default HotListClient;
 
 
 

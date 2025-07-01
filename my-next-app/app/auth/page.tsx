@@ -10,7 +10,6 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen flex   bg-gray-100  ">
-      {/* <div className="w-full max-w-5xl mt-2   bg-white rounded-xl shadow-md overflow-hidden flex  md:flex-row"> */}
         {/* Left - Form Section */}
         <div className="w-full md:w-full  sm:p-4">
           <div className="flex justify-center mb-2">

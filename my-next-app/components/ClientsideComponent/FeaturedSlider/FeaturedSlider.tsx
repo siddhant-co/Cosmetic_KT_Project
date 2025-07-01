@@ -32,9 +32,9 @@ export default function FeaturedSlider({ products }: { products: Product[] }) {
         loop
       >
         {products.map((product) => {
-          const discount = Math.round(
-            ((+product.basePrice - +product.sellingPrice) / +product.basePrice) * 100
-          );
+          // const discount = Math.round(
+          //   ((+product.basePrice - +product.sellingPrice) / +product.basePrice) * 100
+          // );
 
           return (
             <SwiperSlide key={product.id}>
@@ -69,15 +69,17 @@ export default function FeaturedSlider({ products }: { products: Product[] }) {
                     ● In Stock ({product.stock} available)
                   </p>
                   <div className="mt-4 flex gap-2">
-                    <button className="px-4 py-2 border  text-gray-600 rounded ">
+                  <Link href={`/product/${product.slug}`} className="block">
+                    <button className="px-4 py-2 border  text-gray-600 rounded cursor-pointer ">
                       Select Variant
-                    </button>
+                      </button>
+                   </Link>
                     <button className="px-4 py-2 border text-gray-600 rounded hover:bg-gray-100">
                       Wishlist
                     </button>
                     <Link
-                      href={`/product/${product.slug}`}
-                      className="px-4 py-2 border text-gray-600 rounded hover:bg-gray-100"
+                      href={`/product/${product.slug}`} 
+                      className="px-4 py-2 border text-gray-600 rounded hover:bg-gray-100 cursor-pointer"
                     >
                       Details →
                     </Link>

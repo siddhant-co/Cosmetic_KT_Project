@@ -1,13 +1,10 @@
+import { apiCore } from "./ApiCore";
 export async function registerUser(formData: FormData): Promise<string> {
   try {
-    const response = await fetch("https://ecom-testing.up.railway.app/auth/register", {
-      method: "POST",
-      body: formData,
-    });
-
-    const result = await response.text(); 
-    return result;
+    const response = await apiCore("/auth/register", "POST", formData);
+    return typeof response === "string" ? response : JSON.stringify(response);
   } catch (error) {
+    console.error("Registration error:", (error as Error).message);
     throw new Error((error as Error).message || "Registration failed");
   }
 }
