@@ -7,6 +7,8 @@ export interface User {
 }
 
 export interface AuthCustomer {
+  imageUrl: any;
+  lastName: string | undefined;
   id: number;
   name: string;
   email: string;

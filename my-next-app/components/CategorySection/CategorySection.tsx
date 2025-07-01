@@ -12,7 +12,7 @@ export default async function CategorySection() {
   subtitle="Discover a variety of product categories tailored to your needs.." 
 />
 
-      {/* 👇 Pass data to client wrapper */}
+
       <CategoryClientWrapper categories={categories} />
     </section>
   );

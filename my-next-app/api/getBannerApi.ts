@@ -1,7 +1,10 @@
+
+
+
 // api/getBannerApi.ts
 import { apiCore } from "@/api/ApiCore";
 import { BannerType } from "@/types/banner";
-
+ 
 export const getBanners = async (): Promise<BannerType[]> => {
   try {
     const res = await apiCore("/frontend/banners", "GET");
@@ -15,3 +18,5 @@ export const getBanners = async (): Promise<BannerType[]> => {
     throw err;  // Let other errors surface
   }
 };
+ 
+ 
