@@ -7,7 +7,7 @@ import { selectToken } from "@/store/slices/authSlice";
 import { apiCore } from "@/api/ApiCore";
 import LoggedInCartContext from "./LoggedInCartContext";
 
-import { CartItem } from "@/types/cart";
+import { CartItem, CartItemFromAPI } from "@/types/cart";
 import { ProductVariant } from "@/types/product";
 
 const parseCartResponse = (response: any): CartItem[] => {
@@ -56,122 +56,126 @@ const parseCartResponse = (response: any): CartItem[] => {
 
     // --- Filter out malformed or empty items before mapping ---
     const filteredRawCartItems = rawCartItems.filter((item: any) => {
-      // Ensure item is an object, not null, and has a cartItemId
       const cartItemIdExists =
         item &&
         typeof item === "object" &&
         item.id !== undefined &&
         item.id !== null;
 
-      // Ensure a valid productId source exists from the item itself, its product, or its variant
       const productIdExists =
-        (item.productId !== undefined && item.productId !== null) || // Check direct item.productId
+        (item.productId !== undefined && item.productId !== null) ||
         (item.product &&
           item.product.id !== undefined &&
-          item.product.id !== null) || // Check item.product.id
+          item.product.id !== null) ||
         (item.product &&
           item.product.productId !== undefined &&
-          item.product.productId !== null) || // Check item.product.productId
+          item.product.productId !== null) ||
         (item.variant &&
           item.variant.productId !== undefined &&
-          item.variant.productId !== null); // Check item.variant.productId
+          item.variant.productId !== null);
 
       if (!cartItemIdExists || !productIdExists) {
         console.warn(
           "LoggedInCartProvider: Skipping malformed cart item due to missing critical IDs (id or product/variant productId):",
           item
         );
-        return false; // Exclude this item
+        return false;
       }
-      return true; // Include valid items
+      return true;
     });
     // --- END FILTER ---
 
-    const items: CartItem[] = filteredRawCartItems.map((item: any) => {
-      console.log(
-        "LoggedInCartProvider: Processing valid raw cart item:",
-        item
-      );
-
-      const cartItemId = item.id;
-      // Prioritize item.productId (if not null), then item.product.id, then item.variant.productId
-      const productId =
-        item.productId || item.product?.id || item.variant?.productId;
-
-      console.log(
-        `Extracted: cartItemId = ${cartItemId}, productId = ${productId}`
-      );
-
-      if (!cartItemId || !productId) {
-        // This block should ideally not be reached after filtering, but acts as a final safeguard
-        console.error(
-          "LoggedInCartProvider: Critical ID still missing after filter. This indicates an issue with filter logic.",
-          {
-            rawItem: item,
-            extractedCartItemId: cartItemId,
-            extractedProductId: productId,
-          }
+    const items: CartItem[] = filteredRawCartItems.map(
+      (item: CartItemFromAPI) => {
+        console.log(
+          "LoggedInCartProvider: Processing valid raw cart item:",
+          item
         );
-        throw new Error("Backend response missing cartItemId or productId.");
+
+        const cartItemId = item.id;
+        const productId =
+          item.productId || item.product?.id || item.variant?.productId;
+
+        console.log(
+          `Extracted: cartItemId = ${cartItemId}, productId = ${productId}`
+        );
+
+        if (!cartItemId || !productId) {
+          console.error(
+            "LoggedInCartProvider: Critical ID still missing after filter. This indicates an issue with filter logic.",
+            {
+              rawItem: item,
+              extractedCartItemId: cartItemId,
+              extractedProductId: productId,
+            }
+          );
+          throw new Error("Backend response missing cartItemId or productId.");
+        }
+
+        const quantity = item.quantity;
+
+        // Determine the display name:
+        // 1. If it's a variant and the variant has its own name, use "Product Name - Variant Name"
+        // 2. If it's a variant but variant.name is null, use just "Product Name" from variant.product.name
+        // 3. If it's a base product (no variant), use product.name
+        let displayName = "Unknown Product";
+
+        if (item.variant && item.variant.product?.name) {
+          displayName = item.variant.product.name;
+          if (item.variant.name) {
+            // Only append variant name if it's not null
+            displayName += ` - ${item.variant.name}`;
+          }
+        } else if (item.product?.name) {
+          // Fallback for direct product items
+          displayName = item.product.name;
+        }
+
+        const image =
+          item.variant?.images?.[0]?.url ||
+          item.product?.images?.[0]?.image ||
+          "/placeholder.jpg";
+
+        const sellingPrice = parseFloat(
+          item.variant?.selling_price?.toString() ||
+            item.product?.sellingPrice?.toString() ||
+            "0"
+        );
+
+        const basePrice = parseFloat(
+          item.product?.basePrice?.toString() || "0"
+        );
+
+        const variantId = item.variant?.id || item.variantId;
+
+        console.log("LoggedInCartProvider: Mapped cart item (after parsing):", {
+          cartItemId,
+          id: productId,
+          name: displayName,
+          quantity,
+          sellingPrice,
+          basePrice,
+          image,
+          variantId,
+          variant: item.variant,
+          product: item.product,
+          rawItem: item,
+        });
+
+        return {
+          cartItemId: cartItemId,
+          id: productId,
+          name: displayName,
+          quantity: quantity,
+          sellingPrice: sellingPrice,
+          basePrice: basePrice,
+          image: image,
+          variantId: variantId,
+          variant: item.variant,
+          product: item.product,
+        };
       }
-
-      const quantity = item.quantity;
-      // productInfo will be item.product if your backend populates it, otherwise it defaults to the item itself.
-      const productInfo = item.product || item;
-      const variantInfo: ProductVariant | undefined = item.variant; // Variant details if available
-
-      // This is the line that will get the product name.
-      // 1. It first tries variantInfo.name (if a variant has its own specific name, e.g., "Red T-Shirt").
-      // 2. If variantInfo.name is null/undefined, it then tries productInfo.name.
-      //    **THIS is where the original product name will come from,
-      //    IF your backend provides the 'product' object with its 'name' in the /cart response.**
-      // 3. Finally, it defaults to "Unknown Product" if neither is found.
-      const name = variantInfo?.name || productInfo.name || "Unknown Product";
-
-      const image =
-        variantInfo?.images?.[0]?.url || // Prioritize variant image
-        productInfo.images?.[0]?.image || // Fallback to general product image (if productInfo is populated)
-        productInfo.image ||
-        "/placeholder.jpg";
-
-      const sellingPrice = parseFloat(
-        variantInfo?.selling_price || // Prioritize variant's selling price
-          productInfo.sellingPrice ||
-          productInfo.selling_price ||
-          0
-      );
-
-      const basePrice = parseFloat(
-        productInfo.basePrice || // Fallback to the main product's basePrice (as variant doesn't have it directly)
-          productInfo.base_price || // Handle another potential naming for product base price
-          0
-      );
-
-      const variantId = variantInfo?.id || item.variantId || item.variant_id; // Get variant ID
-
-      console.log("LoggedInCartProvider: Mapped cart item (after parsing):", {
-        cartItemId,
-        id: productId, // This is the product ID that the CartItem interface expects
-        name,
-        quantity,
-        sellingPrice,
-        basePrice,
-        image,
-        variantId,
-        rawItem: item, // Include raw item for full inspection
-      });
-
-      return {
-        cartItemId: cartItemId,
-        id: productId,
-        name: name,
-        quantity: quantity,
-        sellingPrice: sellingPrice,
-        basePrice: basePrice,
-        image: image,
-        variantId: variantId,
-      };
-    });
+    );
     console.log("LoggedInCartProvider: Parsed items:", items);
     return items;
   } catch (parseError) {
@@ -179,7 +183,7 @@ const parseCartResponse = (response: any): CartItem[] => {
       "LoggedInCartProvider: Error mapping cart items:",
       parseError
     );
-    return []; // Return empty array on parsing error
+    return [];
   }
 };
 
@@ -250,12 +254,11 @@ export function LoggedInCartProvider({
 
       setItems((currentItems) => {
         const existingItem = currentItems.find((item) => {
-          // This logic correctly considers both productId and variantId
           return (
-            item.id === itemToAdd.id && // Compares the product ID
-            (itemToAdd.variantId // Checks if a variantId is provided for the item being added
-              ? item.variantId === itemToAdd.variantId // If yes, it compares the variantId
-              : true) // If no variantId is provided, it only matches on product ID (for base products)
+            item.id === itemToAdd.id &&
+            (itemToAdd.variantId
+              ? item.variantId === itemToAdd.variantId
+              : true)
           );
         });
 
@@ -266,21 +269,30 @@ export function LoggedInCartProvider({
               : item
           );
         } else {
-          // Assign a temporary cartItemId for optimistic update until backend assigns a real one
           const tempCartItemId = Date.now() * -1;
+          // When adding, prioritize variant.product.name for the display name if variant.name is null
+          let newItemName = itemToAdd.name; // This will be the initial product.name from ProductCard
+          if (itemToAdd.variant?.product?.name) {
+            // Check if variant.product.name exists
+            newItemName = itemToAdd.variant.product.name;
+            if (itemToAdd.variant.name) {
+              // Append variant name ONLY if it exists
+              newItemName += ` - ${itemToAdd.variant.name}`;
+            }
+          }
+
           return [
             ...currentItems,
-            { ...itemToAdd, cartItemId: tempCartItemId },
+            { ...itemToAdd, cartItemId: tempCartItemId, name: newItemName },
           ];
         }
       });
 
       try {
-        // The payload correctly sends both productId and variantId to the backend
         const payload = {
-          productId: itemToAdd.id, // This sends the product ID to the backend
+          productId: itemToAdd.id,
           quantity: itemToAdd.quantity,
-          ...(itemToAdd.variantId && { variantId: itemToAdd.variantId }), // Conditionally adds the variantId if present
+          ...(itemToAdd.variantId && { variantId: itemToAdd.variantId }),
         };
         console.log(
           "LoggedInCartProvider: Calling API for /cart/add with payload:",
@@ -288,12 +300,11 @@ export function LoggedInCartProvider({
         );
         await apiCore("/cart/add", "POST", payload, token);
         console.log("LoggedInCartProvider: /cart/add successful.");
-        // Re-fetch to get correct cart state from backend, including new item and its full data
         await fetchCartItems();
       } catch (err: any) {
         console.error("LoggedInCartProvider: Failed to add cart item:", err);
         setError(err.message || "Failed to add item to cart.");
-        setItems(prevItems); // Revert optimistic update on error
+        setItems(prevItems);
       }
     },
     [token, items, fetchCartItems]
