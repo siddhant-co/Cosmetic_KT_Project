@@ -28,7 +28,6 @@
 
 import { fetchProductBySlug } from "@/api/fetchProductBySlug";
 import ProductDetailClient from "@/components/productDetailPage/ProductDetailPage";
-import { Product } from "@/types/product";
 import { notFound } from "next/navigation";
 
 type Props = {
@@ -40,7 +39,7 @@ export default async function ProductPage({ params }: Props) {
 
   // Debug: this line is safe
   console.log("Slug:", slug);
-  let relatedProducts: Product[] = [];
+  
 
   const product = await fetchProductBySlug(slug);
 

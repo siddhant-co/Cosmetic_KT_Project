@@ -18,6 +18,8 @@ const Gallery = ({ images }: { images: GalleryImage[] }) => {
             <Image
               src={img.image}
               alt={`Gallery ${img.id}`}
+              width={60}
+              height={60}
               className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               fill
             />

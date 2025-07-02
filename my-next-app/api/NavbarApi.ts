@@ -17,5 +17,7 @@ interface NavbarApiResponse {
 }
 
 export const getNavbarData = async (): Promise<NavbarApiResponse> => {
-  return await apiCore("/header", "GET");
+  return await apiCore("/header", "GET", undefined, undefined, {
+    next: { revalidate: 3600 } // ✅ revalidate every hour (for ISR)
+  });
 };

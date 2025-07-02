@@ -12,4 +12,5 @@ export interface BannerType {
   createdAt?: string;
   updatedAt?: string;
   isActive: boolean;
+
 }

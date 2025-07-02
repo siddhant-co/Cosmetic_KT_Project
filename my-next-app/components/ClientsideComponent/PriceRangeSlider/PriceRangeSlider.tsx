@@ -1,6 +1,6 @@
 "use client";
 
-import { Range, getTrackBackground } from "react-range";
+import { Range } from "react-range";
 
 type Props = {
   min: number;
